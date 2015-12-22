@@ -1,0 +1,14 @@
+{
+  "name": "majorsdb",
+  "version": "0.0.1",
+  "description": "An experiment in scraping mayoral press release info.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+  		"cheerio":"0.19.0"
+  	},
+  "author": "David Jay",
+  "license": "MIT"
+}
