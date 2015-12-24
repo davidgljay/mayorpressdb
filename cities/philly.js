@@ -13,8 +13,6 @@ http.get(main_url, function(res) {
 	res.on('end', function() {
 		var links = getLinks(body, base_url, 'h1.post-title a');
 		var promise_array = [];
-		console.log(getPage);
-		console.log(getLinks);
 		for (var i=0; i<links.length; i++) {
 			promise_array.push(getPage(links[i], '#content', '.post-entry', '.post-title'))
 		}
