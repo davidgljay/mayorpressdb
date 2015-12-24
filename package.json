@@ -10,7 +10,8 @@
   		"cheerio":"0.19.0",
   		"moment":"2.10.6",
   		"promise":"7.0.4",
-  		"follow-redirects":"0.0.7"
+  		"follow-redirects":"0.0.7",
+      "pdf-text-extract":"1.4.1"
   	},
   "author": "David Jay",
   "license": "MIT"

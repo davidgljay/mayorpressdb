@@ -4,6 +4,8 @@ http = require('http');
 var url = "http://www.lamayor.org/press_release?page=1",
 base_url = "http://www.lamayor.org";
 
+//GetWithlist
+
 //TODO: iterate through pages.
 
 http.get(url, function(res) {

@@ -2,6 +2,8 @@ var http = require('follow-redirects').http,
 getLinks = require('../utils/getlinks'),
 getPage = require('../utils/getpage');
 
+//GetWithList
+
 var base_url = "http://cityofphiladelphia.wordpress.com",
 main_url = base_url + "/category/press-release/mayors-press-releases/page/1";
 

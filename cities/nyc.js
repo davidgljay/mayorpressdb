@@ -1,6 +1,8 @@
 // Should return items of the format:
 // Headline, body, tags, image, postdate.
 
+//SPECIAL
+
 var http = require('http');
 
 //TODO: remove start and endate;

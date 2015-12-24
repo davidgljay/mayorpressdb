@@ -5,6 +5,8 @@ cheerio = require('cheerio');
 var base_url = "http://www.cityofchicago.org/",
 main_url = base_url + "city/en/depts/mayor/press_room/press_releases.1.html?numPerPage=100"
 
+//GetWithList
+
 //Need to collect links, get each of them, and then extract. 
 //TODO: implement iteration through pages.
 var press_releases = [];
