@@ -1,6 +1,6 @@
 var getCityWithList = require('./utils/getcitywithlist');
-//Step 1) Move through cities.
-//GetWith cities are just that, otherwise we use their req file.
+
+//Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
 var cityArray = {
 	"New York":require('./cities/nyc'),
 	"Los Angeles":getCityWithList(
@@ -19,7 +19,14 @@ var cityArray = {
 					body: 'p',
 					title: 'h1'
 				}),
-	"Houston":require('./cities/houston'),
+	"Houston":getCityWithList(
+				'http://www.houstontx.gov/mayor/press/',
+				{
+					links:'ul.bullets li a',
+					content:'#mainContent',
+					body:'p',
+					title:'.pageTitle'
+				}),
 	"Philadelphia": getCityWithList(
 						'http://cityofphiladelphia.wordpress.com/category/press-release/mayors-press-releases/page/{n}',
 						{
@@ -48,17 +55,25 @@ var cityArray = {
 	"Dallas":getCityWithList(
 				'http://www.dallascitynews.net/press-room-archive',
 				{
-					//TODO: Fill in Dallas links.
-					links: '',
-					content: '',
-					body: '',
-					title: ''
+					links: '.gdw_story_title a',
+					content: '#gb_ab_main_tab',
+					body: '#gb_ab_main_body',
+					title: '.govd_header'
 
 				}),
 	//This requires PDF extraction, ie a world of hurt.
 	"San Jose":require('./cities/sanjose')
 };
 
-
-
-//Step 2) Post to DynmoDB.
+for (city in cityArray) {
+	cityArray[city]().then(
+		//On Sucess
+		function(results) {
+			//Todo: Post to DynamoDB.
+			console.log("Successfully fetched " + city + "!");
+		},
+		//On Error
+		function(err) {
+			console.log("Error fetching " + city + ": " + err);
+		})
+};
