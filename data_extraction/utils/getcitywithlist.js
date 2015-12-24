@@ -39,6 +39,7 @@ module.exports = function(url, queries) {
 				}
 			);		
 	};
+	nextListPage(1);
 };
 
 //Get the links from a page of press releases, get each of those pages, and return them in the proper format.

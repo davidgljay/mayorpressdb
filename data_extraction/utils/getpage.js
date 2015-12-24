@@ -4,7 +4,7 @@ firstdate = require('./firstdate'),
 cheerio = require('cheerio');
 
 //Get and parse a page with a press release. Allows for a slight delay to prevent
-//excessive calls to city servers.  
+//excessive calls to city servers. 
 module.exports = function(url, sleepBy, contentQuery, bodyQuery, titleQuery) {
 	return new Promise(function(resolve, reject) {
 		setTimeout(function() {
