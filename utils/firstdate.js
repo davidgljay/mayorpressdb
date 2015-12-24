@@ -10,7 +10,6 @@ module.exports = function(body) {
 	var first_date_exec = first_date_re.exec(body),
 	first_date='';
 	var first_date_string = first_date_exec ? first_date_exec[0]:null;
-	console.log(first_date_string);	
 	if (num_date_re.exec(first_date_string)) {
 		var date_info = num_date_re.exec(first_date_string)
 		first_date = new Date(date_info[3],date_info[1]-1,date_info[2]);
