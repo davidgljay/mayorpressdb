@@ -4,8 +4,7 @@ getPage = require('../utils/getpage');
 
 //GetWithList
 
-var base_url = "http://www.sanantonio.gov",
-main_url = base_url + "/Commpa/News/TabId/317/PgrID/1970/PageID/1/PID/1970/evl/0/CategoryID/5/CategoryName/Mayor-Council/Default.aspx";
+var base_url = "http://www.sanantonio.gov/Commpa/News/TabId/317/PgrID/1970/PageID/1/PID/1970/evl/0/CategoryID/5/CategoryName/Mayor-Council/Default.aspx";
 
 //TODO: iterate though all pages.
 console.log(main_url);
