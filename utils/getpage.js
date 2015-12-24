@@ -16,6 +16,7 @@ module.exports = function(url, contentQuery, bodyQuery, titleQuery) {
 		    		normalizeWhitespace: true
 				});
 				var content = $(contentQuery);
+				console.log(content.text());
 				if (content.text().length == 0) {
 					resolve(null);
 				} else {
