@@ -1,0 +1,11 @@
+{
+  "name": "tag_service",
+  "version": "0.0.1",
+  "description": "A service for digesting text from a database, identifying tags related to that text, and posting them to the db.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine-node ./spec"
+  },
+  "author": "David Jay",
+  "license": "MIT"
+}
