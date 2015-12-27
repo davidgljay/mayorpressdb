@@ -20,16 +20,16 @@ module.exports = function(url, queries) {
 
 	return new Promise(function(resolve, reject) {
 	//Iterate through pages with lists of press releases
-	var promise_array = [];
+	var press_releases = [];
 	var nextListPage = function(n) {
 		getListPage(url.replace("{n}", n), queries)
 			.then(
 				//On success
 				function(results) {
 					if (results == "done") {
-						resolve(promise_array);
+						resolve(press_releases);
 					} else {
-						promise_array.concat(results);
+						press_releases.concat(results);
 						nextListPage(n++);					
 					};
 				}, 

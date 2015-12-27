@@ -44,7 +44,7 @@ var cityArray = {
 						body: '.content', 
 						title: 'h1'
 					}),
-	"SanDiego":getCityWithList(
+	"San Diego":getCityWithList(
 				"http://www.sandiego.gov/mayor/news/index.shtml", 
 				{
 					links: '#releases td a',
