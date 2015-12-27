@@ -1,6 +1,12 @@
 var getCityWithList = require('./utils/getcitywithlist');
 
 //Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
+
+//TODO: Come up with testing strategy.
+//Set max of n (page number) to be 2. Comment out all but one city at a time.
+//Writing automated frameworks will require faking return from these cities with knock, more trouble than its worth at this point.
+//confirm that I get one good page of results from each city.
+//Also, set up a testdb.
 var cityArray = {
 	"New York":require('./cities/nyc'),
 	"Los Angeles":getCityWithList(
@@ -67,10 +73,17 @@ var cityArray = {
 
 for (city in cityArray) {
 	cityArray[city]().then(
-		//On Sucess
+		//On Success
 		function(results) {
-			//Todo: Post to DynamoDB.
-			console.log("Successfully fetched " + city + "!");
+			var dynamo_promise = dynamodb(results.splice(0,24));
+			while (results.length > 0) {
+				dynamo_promise.then(function() {
+					return dynamodb(results.splice(0,24));
+				});
+			}
+			dynamo_promise.then(function() {
+				console.log("Done fetching " + city + "!");
+			})
 		},
 		//On Error
 		function(err) {
