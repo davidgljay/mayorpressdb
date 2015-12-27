@@ -12,7 +12,7 @@
   		"promise":"7.0.4",
   		"follow-redirects":"0.0.7",
       "pdf-text-extract":"1.4.1",
-      "aws-sdk":"2.2.26"
+      "aws-sdk":"2.2.17"
   	},
   "author": "David Jay",
   "license": "MIT"

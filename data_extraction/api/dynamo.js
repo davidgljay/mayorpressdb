@@ -44,7 +44,7 @@ var put_params = module.exports.put_params = function(items) {
 	    "RequestItems": 
     	    {
         	    process.env.DYNAMODB_NAME : formatted_items
-        	},
+        	}s,
 	    ReturnConsumedCapacity: 'NONE'
 	};
 };

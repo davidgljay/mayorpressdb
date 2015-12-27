@@ -3,7 +3,8 @@ var http = require('http'),
 fs = require('fs'),
 path = require('path'),
 firstdate = require('../utils/firstdate'),
-getLinks = require('../utils/getlinks');
+getLinks = require('../utils/getlinks'),
+extract = require('pdf-text-extract');;
 
 //SPECIAL
 var base_url = 'http://www.sanjoseinfo.org',
@@ -79,7 +80,6 @@ var getPDF = function(url, n, l) {
 		  response.pipe(file);
 		  response.on('end', function() {
 		  	var filePath = path.join(__dirname, './file' + n '-' + l + '.pdf');
-			var extract = require('pdf-text-extract');
 			extract(filePath, function (err, pages) {
 			  if (err) {
 			    reject("PDF Extraction: " + err);
