@@ -1,6 +1,7 @@
 var AWS = require('aws-sdk'),
 logger = require('../logger'),
-Deferred = require('promise');
+Deferred = require('promise'),
+hash = require('../utils/hash');
 
 var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
@@ -32,6 +33,7 @@ var put_params = module.exports.put_params = function(items) {
 	for (var i = items.length - 1; i >= 0; i--) {
 		formatted_items.push({
 			Item:  {
+				hash:{S:hash(tems[i].url + items[i].date.toISOString())}
 	           	title:{S:items[i].title},
 	           	body:{S:items[i].body},
 	           	date:{S:items[i].date.toISOString()},
