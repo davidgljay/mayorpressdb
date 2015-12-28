@@ -3,6 +3,12 @@ logger = require('../logger'),
 Deferred = require('promise'),
 hash = require('../utils/hash');
 
+AWS.config.update({
+	accessKeyId: process.env.AWS_KEY, 
+	secretAccessKey: process.env.AWS_SECRET, 
+	region: process.env.AWS_REGION
+})
+
 var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
 //TODO: Auth with dynamoDB.
