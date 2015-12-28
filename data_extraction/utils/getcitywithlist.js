@@ -9,14 +9,12 @@ getLinks = require('../utils/getlinks'),
 getPage = require('../utils/getpage'),
 Promise = require('promise');
 
+var sleepcount;
+
 
 module.exports = function(url, queries) {
 	//Space calls by 50ms to be gentle to city servers.
-	var sleepcount = 0;
-	var sleepBy = function() {
-		sleepcount += 50;
-		return sleepcount;
-	}
+	sleepcount = 0;
 
 	return new Promise(function(resolve, reject) {
 	//Iterate through pages with lists of press releases
@@ -26,15 +24,18 @@ module.exports = function(url, queries) {
 				.then(
 					//On success
 					function(results) {
-						if (results == "done") {
-							resolve(press_releases);
-						} else {
-							press_releases.concat(results);
-							nextListPage(n++);					
-						};
+						console.log("Returning results");
+						resolve(results)
+						// if (results == "done") {
+						// 	resolve(press_releases);
+						// } else {
+						// 	press_releases.concat(results);
+						// 	nextListPage(n++);					
+						// };
 					}, 
 					//On error.
 					function(err) {
+						console.log("Error in getListPage");
 						reject(err);
 					}
 				);		
@@ -45,7 +46,7 @@ module.exports = function(url, queries) {
 
 //Get the links from a page of press releases, get each of those pages, and return them in the proper format.
 var getListPage = function(url, queries) {
-	new Promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var splitUrl = /(http:\/\/[^\/]+)(\/.+)/.exec(url);
 		http.get(url, function(res) {
 			var body ='';
@@ -59,7 +60,7 @@ var getListPage = function(url, queries) {
 				var links = getLinks(body, splitUrl[1], queries.links),
 				promise_array = [];
 				for (var i=0; i<links.length; i++) {
-					promise_array.push(getPage(links[i], sleepBy(), queries.content, queries.body, queries.title))
+					promise_array.push(getPage(links[i], sleepBy(), queries))
 				}
 				Promise.all(promise_array).then(function(results) {
 					resolve(results);
@@ -70,3 +71,8 @@ var getListPage = function(url, queries) {
 		});		
 	});
 };
+
+var sleepBy = function() {
+	sleepcount += 50;
+	return sleepcount;
+}
