@@ -6,7 +6,7 @@
 var http = require('http'),
 Promise = require('promise');
 
-var nyc_url = "http://www1.nyc.gov/home/lscs/NewsFilterService.page?category=all&contentType=press_release,statement,executive_order,public_schedule&language=english&pageNumber={n}";
+var nyc_url = "http://www1.nyc.gov/home/lscs/NewsFilterService.page?category=all&contentType=press_release,statement,executive_order,public_schedule&language=english&pageNumber=1";//{n}";
 var press_releases = [];
 
 module.exports = function() {
@@ -17,9 +17,9 @@ module.exports = function() {
           //On success
           function(results) {
             if (results == "done") {
-              resolve(promise_array);
+              resolve(press_releases);
             } else {
-              promise_array.concat(results);
+              press_releases.concat(results);
               nextList(n++);          
             };
           }, 
@@ -33,13 +33,12 @@ module.exports = function() {
   });
 }
   
-
-//TODO: iterate through page numbers with a short sleep until I recieve a 404.
+  //TODO: Add short sleep.
 
 var getList = function(url) {
   return new Promise(function(resolve, reject) {
     http.get(url, function(res) {
-      console.log(res.statusCode);
+      console.log("NYC:" + res.statusCode);
       if (res.statusCode==404) {
         resolve('done');
       }
@@ -49,7 +48,7 @@ var getList = function(url) {
         });
       res.on('end', function() {
         body = /(.+-->)(.+)(<!-.+)/.exec(body)[2];
-        var response = JSON.parse(body).results.assets,
+        var response = JSON.parse(body).results.assets;
         for (var i in response) {
           press_releases.push({
             "title": response[i].metadata['TeamSite/Metadata/Title'],
