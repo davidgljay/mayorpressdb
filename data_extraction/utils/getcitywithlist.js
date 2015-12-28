@@ -20,26 +20,27 @@ module.exports = function(url, queries) {
 
 	return new Promise(function(resolve, reject) {
 	//Iterate through pages with lists of press releases
-	var press_releases = [];
-	var nextListPage = function(n) {
-		getListPage(url.replace("{n}", n), queries)
-			.then(
-				//On success
-				function(results) {
-					if (results == "done") {
-						resolve(press_releases);
-					} else {
-						press_releases.concat(results);
-						nextListPage(n++);					
-					};
-				}, 
-				//On error.
-				function(err) {
-					reject(err);
-				}
-			);		
-	};
-	nextListPage(1);
+		var press_releases = [];
+		var nextListPage = function(n) {
+			getListPage(url.replace("{n}", n), queries)
+				.then(
+					//On success
+					function(results) {
+						if (results == "done") {
+							resolve(press_releases);
+						} else {
+							press_releases.concat(results);
+							nextListPage(n++);					
+						};
+					}, 
+					//On error.
+					function(err) {
+						reject(err);
+					}
+				);		
+		};
+		nextListPage(1);
+	});
 };
 
 //Get the links from a page of press releases, get each of those pages, and return them in the proper format.
@@ -63,7 +64,7 @@ var getListPage = function(url, queries) {
 				Promise.all(promise_array).then(function(results) {
 					resolve(results);
 				}, function(err) {
-					reject("Error fetching url" +  err));
+					reject("Error fetching url" +  err);
 				})
 			})
 		});		

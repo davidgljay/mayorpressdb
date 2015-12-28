@@ -14,9 +14,8 @@ module.exports = function(url, sleepBy, contentQuery, bodyQuery, titleQuery) {
 					data += chunk;
 				});
 				res.on('end', function() {
-					resolve(processBody(body))
-					};
-				})
+					resolve(processBody(body));
+				});
 			}).on('error', function(err) {
 				console.log("Error:" + err);
 				resolve(null);
