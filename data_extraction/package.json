@@ -7,13 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-  		"cheerio":"0.19.0",
-  		"moment":"2.10.6",
-  		"promise":"7.0.4",
-  		"follow-redirects":"0.0.7",
-      "pdf-text-extract":"1.4.1",
-      "aws-sdk":"2.2.17"
-  	},
+    "aws-sdk": "2.2.17",
+    "cheerio": "0.19.0",
+    "follow-redirects": "0.0.7",
+    "jslint": "^0.9.5",
+    "moment": "2.10.6",
+    "pdf-text-extract": "1.4.1",
+    "promise": "7.0.4"
+  },
   "author": "David Jay",
   "license": "MIT"
 }
