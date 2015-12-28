@@ -59,6 +59,8 @@ var getListPage = function(url, queries) {
 			res.on("end", function() {
 				var links = getLinks(body, splitUrl[1], queries.links),
 				promise_array = [];
+				console.log("GotListPage:" + body);
+				console.log(JSON.stringify(links));
 				for (var i=0; i<links.length; i++) {
 					promise_array.push(getPage(links[i], sleepBy(), queries))
 				}

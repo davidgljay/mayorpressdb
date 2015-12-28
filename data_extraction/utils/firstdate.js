@@ -2,7 +2,7 @@ module.exports = function(body) {
 
 	//TODO: Add different variation of wordy date (ie "December 3rd, December third");
 	var first_date_re = /(\d{1,2}\/\d{1,2}\/\d{2,4})|((jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^ ]* \d{1,2}(?:rd|st|th)*, \d{4})|(\d{4}-\d{1,2}-\d{1,2})|((\d{1,2}(?:rd|st|th)*)|first|second|third|fourth|fifth|sixth|seventh|eight|ninth|tenth|eleventh|twelvth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteeenth|nineteenth|twentieth|twenty first|twenty second|twenty third|twenty fourth|twenty fifth|twenty sixth|twenty seventh|twenty eigth|twenty ninth|thirtieth|thirty first) of (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^ ]*, \d{4}/i
-	var num_date_re = 	/([0-12]{1,2})(?:\/|\.|-)([0-31]){1,2}(?:\/|\.|-)(\d{4})/;
+	var num_date_re = 	/(\d{1,2})(?:\/|\.|-)(\d){1,2}(?:\/|\.|-)(\d{4})/;
 	var iso_date_re = /(\d{4})-([0-12]{1,2})-([0-9]{1,2})/;
 	var formal_date_re = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^ ]*\s(\d{0,2})(?:rd|st|th)*, (\d{4})/i;
 	var wordy_date_re = /(first|second|third|fourth|fifth|sixth|seventh|eight|ninth|tenth|eleventh|twelvth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteeenth|nineteenth|twentieth|twenty first|twenty second|twenty third|twenty fourth|twenty fifth|twenty sixth|twenty seventh|twenty eigth|twenty ninth|thirtieth|thirty first) of (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^ ]*, (\d{4})/i;
