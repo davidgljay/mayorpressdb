@@ -7,8 +7,7 @@
 //They also seem to jump, hooboy. I'll get them in batches of 50. If there are none in a span of 30 I'll call it a day. 
 //Calls of 50 will happen sequentially to avoid breaking their server.
 
-var http = require('follow-redirects').http,
-getPage = require('../utils/getpage'),
+var getPage = require('../utils/getpage'),
 promise = require('promise');
 
 var base_url = "http://www.phoenix.gov",
@@ -22,11 +21,15 @@ module.exports = function() {
 	return new Promise(function(resolve, reject) {
 		var getReleases = function() {
 			var promise_array = [];
-			for (var i=0; i<50; i++) {
-				//TODO: Replace with pheonix values.
+			var sleepBy = 0;
+			for (var i=0; i<100; i++) {
 				count ++;
 				console.log(main_url+count)
-				promise_array.push(getPage(main_url+count, '#MSOZoneCell_WebPartWPQ8', 'p', '.title'))
+				sleepBy += 200;
+				promise_array.push(getPage(main_url+count, sleepBy, {
+					content:'#MSOZoneCell_WebPartWPQ8', 
+					body:'p', 
+					title:'.title'}))
 			}
 			Promise.all(promise_array).then(function(results) {
 				press_releases.concat(results);
@@ -39,6 +42,7 @@ module.exports = function() {
 				if (cont) {
 					getReleases()
 				} else {
+					console.log("No results in set");
 					resolve(press_releases);
 				}
 			}, function(err) {
