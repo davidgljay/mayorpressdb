@@ -7,9 +7,9 @@ RUN apt-get update
 WORKDIR /home/citybuzz
 ENV PAPERTRAIL_HOST='logs3.papertrailapp.com'
 ENV PAPERTRAIL_PORT='53932'
-RUN apt-get install pdftk
-RUN apt-get install poppler-utils
-RUN apt-get install ghostscript
-RUN npm install
-CMD node index
+RUN apt-get -y install pdftk
+RUN apt-get -y install poppler-utils
+RUN apt-get -y install ghostscript
+#RUN npm install
+#CMD node index
 
