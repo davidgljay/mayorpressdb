@@ -1,5 +1,5 @@
 var AWS = require('aws-sdk'),
-logger = require('../logger'),
+logger = require('../utils/logger'),
 Deferred = require('promise'),
 hash = require('../utils/hash');
 
@@ -13,46 +13,53 @@ var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
 //TODO: Auth with dynamoDB.
 
-module.exports = function(items) {
+module.exports = function(items, city) {
 	return new Promise(function(resolve, reject) {
 		console.log("Preparing to post to dynamo");
 		//TODO: make this a batchputitem for efficiency's sake.
-		if (item == null) {
+		if (items == null) {
 			resolve()
 		} else {
-			dynamodb.putItem(put_params(item)), function(err, response) {
+			dynamodb.batchWriteItem(put_params(items), function(err, response) {
+				console.log("Got response");
 				if (err) {
-					console.log("Error posting item to dynamo");
+					console.log("Error posting item to dynamo:" + err);
 					reject(err);
 				} else {
-					console.log("item post to dynamo successful");
+					console.log("Item post to dynamo successful:" + response);
 					resolve();
 				}
-			};			
-		}
-
-	})
+			});			
+		;}
+	});
 }
 
-var put_params = module.exports.put_params = function(items) {
+var put_params = function(items) {
 	var formatted_items = [];
+	console.log("Formatting items:" + items.length);
 	for (var i = items.length - 1; i >= 0; i--) {
+		//Some items will be null, skip them.
+		if (items[i] == null) {
+			continue;
+		}
 		formatted_items.push({
-			Item:  {
-				hash:{S:hash(tems[i].url + items[i].date.toISOString())}
-	           	title:{S:items[i].title},
-	           	body:{S:items[i].body},
-	           	date:{S:items[i].date.toISOString()},
-	           	url:{S:items[i].url}
-           	}
+			PutRequest: {
+				Item:  {
+					hash:{S:hash(items[i].url + "_" + items[i].date).toString()},
+		           	title:{S:items[i].title},
+		           	body:{S:items[i].body},
+		           	date:{S:items[i].date},
+		           	url:{S:items[i].url},
+		           	city:{S:city}
+	           	}
+            }
           });
 	};
 
-	return {
-	    "RequestItems": 
-    	    {
-        	    process.env.DYNAMODB_NAME : formatted_items
-        	}s,
+	var dynamo_output = {
+	    "RequestItems": {},
 	    ReturnConsumedCapacity: 'NONE'
 	};
+	dynamo_output.RequestItems[process.env.DYNAMODB_NAME] = formatted_items;
+	return dynamo_output;
 };
