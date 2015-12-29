@@ -19,7 +19,7 @@ else if (process.env.ENV=="test") {
 	});
 }
 
-var logger = {};
+// var logger = {};
 
 
 logger.reportError = function(tag) {

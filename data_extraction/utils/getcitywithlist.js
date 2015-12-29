@@ -24,18 +24,15 @@ module.exports = function(url, queries) {
 				.then(
 					//On success
 					function(results) {
-						console.log("Returning results");
-						resolve(results)
-						// if (results == "done") {
-						// 	resolve(press_releases);
-						// } else {
-						// 	press_releases.concat(results);
-						// 	nextListPage(n++);					
-						// };
+						if (results == "done") {
+							resolve(press_releases);
+						} else {
+							press_releases.concat(results);
+							nextListPage(n++);					
+						};
 					}, 
 					//On error.
 					function(err) {
-						console.log("Error in getListPage");
 						reject(err);
 					}
 				);		
@@ -59,8 +56,6 @@ var getListPage = function(url, queries) {
 			res.on("end", function() {
 				var links = getLinks(body, splitUrl[1], queries.links),
 				promise_array = [];
-				console.log("GotListPage:" + body);
-				console.log(JSON.stringify(links));
 				for (var i=0; i<links.length; i++) {
 					promise_array.push(getPage(links[i], sleepBy(), queries))
 				}

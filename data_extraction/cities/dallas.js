@@ -10,7 +10,6 @@ module.exports = function() {
 	sleepBy = 0;
 	return new Promise(function(resolve, reject) {
 		http.get(dallas_url, function(res) {
-			console.log("Dallas:" + res.statusCode);
       if (res.statusCode==404) {
        	resolve('done');
       }

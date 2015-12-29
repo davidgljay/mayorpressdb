@@ -4,7 +4,8 @@ fs = require('fs'),
 path = require('path'),
 firstdate = require('../utils/firstdate'),
 getLinks = require('../utils/getlinks'),
-extract = require('pdf-text-extract');;
+extract = require('pdf-text-extract'),
+logger = require('../utils/logger');
 
 //SPECIAL
 var base_url = 'http://www.sanjoseinfo.org',
@@ -17,7 +18,6 @@ module.exports = function() {
 
 		//Move through all of the pages with lists, creating an array of promises which return and parse PDFs.
 		var nextListPage = function(n) {
-			console.log(main_url.replace("{n}",n));
 			http.get(main_url.replace("{n}",n), function(res) {
 				var body = '';
 				if (res.statusCode==404) {
@@ -28,13 +28,11 @@ module.exports = function() {
 				})
 				res.on('end', function() {
 					var links = getLinks(body, base_url, '#documentList .headline a');
-					console.log(links);
 					if (links.length > 0) {
 						//Push a promise to an array
 						press_release_promises.push(getPDFsFromList(links, n));
 						nextListPage(n+1);
 					} else {
-						console.log("Done adding to promise_array:" + press_release_promises.length);
 						//When all promises are returned, flatten them into a 1d array and return.
 						Promise.all(press_release_promises).then(
 							function(results) {
@@ -93,7 +91,7 @@ var getPDF = function(url, i, n) {
 					var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
 					extract(filePath, function (err, pages) {
 						if (err) {
-							console.log("PDF Extraction: " + err);
+							logger.error("PDF Extraction: " + err);
 							resolve(null);
 					  	} else {
 					  		resolve(pages.join('\n'));
