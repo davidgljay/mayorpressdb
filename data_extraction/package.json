@@ -13,7 +13,9 @@
     "jslint": "^0.9.5",
     "moment": "2.10.6",
     "pdf-text-extract": "1.4.1",
-    "promise": "7.0.4"
+    "promise": "7.0.4",
+    "winston":"latest",
+    "winston-papertrail":"latest"
   },
   "author": "David Jay",
   "license": "MIT"
