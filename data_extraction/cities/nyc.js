@@ -38,7 +38,6 @@ module.exports = function() {
 var getList = function(url) {
   return new Promise(function(resolve, reject) {
     http.get(url, function(res) {
-      console.log("NYC:" + res.statusCode);
       if (res.statusCode==404) {
         resolve('done');
       }

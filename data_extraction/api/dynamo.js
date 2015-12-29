@@ -1,7 +1,8 @@
 var AWS = require('aws-sdk'),
 logger = require('../utils/logger'),
 Deferred = require('promise'),
-hash = require('../utils/hash');
+hash = require('../utils/hash'),
+logger = require('../utils/logger');
 
 AWS.config.update({
 	accessKeyId: process.env.AWS_KEY, 
@@ -15,18 +16,17 @@ var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
 module.exports = function(items, city) {
 	return new Promise(function(resolve, reject) {
-		console.log("Preparing to post to dynamo");
 		//TODO: make this a batchputitem for efficiency's sake.
 		if (items == null) {
 			resolve()
 		} else {
 			dynamodb.batchWriteItem(put_params(items), function(err, response) {
-				console.log("Got response");
+				logger.info("Got dynamo response");
 				if (err) {
-					console.log("Error posting item to dynamo:" + err);
+					logger.error("Error posting item to dynamo:" + err);
 					reject(err);
 				} else {
-					console.log("Item post to dynamo successful:" + response);
+					logger.info("Item post to dynamo successful:" + response);
 					resolve();
 				}
 			});			
@@ -36,7 +36,6 @@ module.exports = function(items, city) {
 
 var put_params = function(items) {
 	var formatted_items = [];
-	console.log("Formatting items:" + items.length);
 	for (var i = items.length - 1; i >= 0; i--) {
 		//Some items will be null, skip them.
 		if (items[i] == null) {

@@ -1,7 +1,8 @@
 var Promise = require('promise'),
 http = require('follow-redirects').http,
 firstdate = require('./firstdate'),
-cheerio = require('cheerio');
+cheerio = require('cheerio'),
+logger = require('../utils/logger');
 
 //Get and parse a page with a press release. Allows for a slight delay to prevent
 //excessive calls to city servers. 
@@ -34,7 +35,7 @@ var processBody = function(data, queries, url) {
 	};
 	var date = firstdate(content.text());
 	if (date == '') {
-		console.log("Undefined date");
+		logger.info("Undefined date");
 		return null;
 	}
 	var body = '';

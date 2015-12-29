@@ -57,32 +57,30 @@ var cities = {
 					title: 'h3'
 				}),
 	"Dallas":require('./cities/dallas')(),
-	// //This requires PDF extraction, ie a world of hurt.
+	//This requires PDF extraction, ie a world of hurt.
 	"San Jose":require('./cities/sanjose')()
 };
-
 for (city in cities) {
-	console.log("Adding to chain for: " + city);
+	logger.info("Adding to chain for: " + city);
 	cities[city].then(
 		//On Success
 		function(results) {
-			console.log("Got results");
 			var dynamo_post = function(results) {
 				if (results.length>0) {
 					dynamodb(results.splice(0,24), city).then(
 						function() {
 							dynamo_post(results);
 						}, function(err) {
-							console.log("Error posting " + city + " to dynamoDB: " + err);
+							logger.error("Error posting " + city + " to dynamoDB: " + err);
 						});
 				} else {
-					console.log("Done fetching " + city + "!");
+					logger.info("Done fetching " + city + "!");
 				};
 			};
 			dynamo_post(results);
 		},
 		//On Error
 		function(err) {
-			console.log("Error fetching " + city + ": " + err);
+			logger.error("Error fetching " + city + ": " + err);
 		})
 };

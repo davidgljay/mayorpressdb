@@ -8,7 +8,8 @@
 //Calls of 50 will happen sequentially to avoid breaking their server.
 
 var getPage = require('../utils/getpage'),
-promise = require('promise');
+promise = require('promise'),
+logger = require('../utils/logger');
 
 var base_url = "http://www.phoenix.gov",
 main_url = base_url + "/news/mayor/";
@@ -24,7 +25,6 @@ module.exports = function() {
 			var sleepBy = 0;
 			for (var i=0; i<100; i++) {
 				count ++;
-				console.log(main_url+count)
 				sleepBy += 200;
 				promise_array.push(getPage(main_url+count, sleepBy, {
 					content:'#MSOZoneCell_WebPartWPQ8', 
@@ -42,7 +42,7 @@ module.exports = function() {
 				if (cont) {
 					getReleases()
 				} else {
-					console.log("No results in set");
+					logger.info("No results in set");
 					resolve(press_releases);
 				}
 			}, function(err) {
