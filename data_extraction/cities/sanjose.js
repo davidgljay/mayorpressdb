@@ -38,12 +38,10 @@ module.exports = function() {
 						//When all promises are returned, flatten them into a 1d array and return.
 						Promise.all(press_release_promises).then(
 							function(results) {
-								console.log("All results returned:" + results.length);
 								var press_releases = [];
 								for (var i = results.length - 1; i >= 0; i--) {
 									press_releases = press_releases.concat(results[i]);
 								};
-								console.log(press_releases.length);
 								resolve(press_releases);
 							},
 							function(err) {
@@ -67,7 +65,6 @@ var getPDFsFromList = function(links, n) {
 	};
 	return Promise.all(promise_array).then(function(press_releases) {
 		var result_array = [];
-		console.log("Got PDFs from list: " + press_releases.length);
 		for (var i = press_releases.length - 1; i >= 0; i--) {
 			var date = firstdate(press_releases[i]);
 			if (date=='') {
@@ -88,20 +85,17 @@ var getPDF = function(url, i, n) {
 	return new Promise(function(resolve, reject) {
 		var file = fs.createWriteStream("./pdfs/pressrelease" + i + "-" + n + ".pdf");
 		http.get(url, function(response) {
-			console.log(response.statusCode);
 			if (response.statusCode == 404) {
 				resolve(null);
 			} else {
 				response.pipe(file);
 				response.on('end', function() {
 					var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
-					console.log("About to extract at:" + filePath);
 					extract(filePath, function (err, pages) {
 						if (err) {
 							console.log("PDF Extraction: " + err);
 							resolve(null);
 					  	} else {
-					  		console.log("PDF read successful");
 					  		resolve(pages.join('\n'));
 					  	};
 					});
