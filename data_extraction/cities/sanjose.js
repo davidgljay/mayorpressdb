@@ -72,7 +72,8 @@ var getPDFsFromList = function(links, n) {
 					title: "Press Release: PDF",
 					date: date.toISOString(),
 					body: press_releases[i],
-					url: links[i]
+					url: links[i],
+					city: 'San Jose'
 			});				
 		};
 		return result_array;		
@@ -99,6 +100,8 @@ var getPDF = function(url, i, n) {
 					});
 			  	});
 		  	};		
+		}, function(err) {
+			logger.error('Error getting PDF:' + err );
 		});
 	});
 };

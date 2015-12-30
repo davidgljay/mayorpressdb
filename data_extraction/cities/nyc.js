@@ -4,14 +4,21 @@
 //SPECIAL
 
 var http = require('http'),
-Promise = require('promise');
+Promise = require('promise'),
+logger = require('../utils/logger');
 
-var nyc_url = "http://www1.nyc.gov/home/lscs/NewsFilterService.page?category=all&contentType=press_release,statement,executive_order,public_schedule&language=english&pageNumber=1";//{n}";
+var nyc_url = "http://www1.nyc.gov/home/lscs/NewsFilterService.page?category=all&contentType=press_release,statement,executive_order,public_schedule&language=english&pageNumber={n}";
 var press_releases = [];
 
 module.exports = function() {
+  logger.info("NYC");
   return new Promise(function (resolve, reject) {
     var nextList = function(n) {
+      // if (n>5) {
+      //   resolve(press_releases);
+      //   return;
+      // }
+      logger.info("Getting NYC page:" + n)
       getList(nyc_url.replace("{n}", n))
         .then(
           //On success
@@ -20,7 +27,7 @@ module.exports = function() {
               resolve(press_releases);
             } else {
               press_releases.concat(results);
-              nextList(n++);          
+              nextList(n+1);          
             };
           }, 
           //On error.
@@ -52,14 +59,15 @@ var getList = function(url) {
           press_releases.push({
             "title": response[i].metadata['TeamSite/Metadata/Title'],
             "body":  response[i].metadata['TeamSite/Metadata/Description'],
-            "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']),
-            "image": response[i].metadata['TeamSite/Metadata/ImagePath'],
-            "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL']
+            "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']).toISOString(),
+            "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL'],
+            "city": "New York"
           });
         };
         resolve(press_releases);
       })
     }).on('error', function(e) {
+      logger.error("Error in NYC:" + err);
       reject(e.message);
     });    
   })

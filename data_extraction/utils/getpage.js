@@ -15,10 +15,11 @@ module.exports = function(url, sleepBy, queries) {
 					data += chunk;
 				});
 				res.on('end', function() {
+					logger.info("Successfully got: " + url);
 					resolve(processBody(data, queries, url));
 				});
 			}).on('error', function(err) {
-				console.log("Error:" + err);
+				logger.error("Error loading page:" + url +"\n" + err);
 				resolve(null);
 			});
 		}, sleepBy);
@@ -42,10 +43,16 @@ var processBody = function(data, queries, url) {
 	content.find(queries.body).each(function(i, elem) {
 		body += $(elem).text() + "\n";
 	})
+	var title = content.find(queries.title).text();
+	if (title=='') {
+		logger.error("Failed to find title in " + url);
+		title='Press Release from ' + queries.city;
+	}
 	return {
-		'title':content.find(queries.title).text(),
+		'title':title,
 		'body':body,
 		'date':date.toISOString(),
-		'url':url
+		'url':url,
+		'city':queries.city
 	};					
 }

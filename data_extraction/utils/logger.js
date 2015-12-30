@@ -22,9 +22,5 @@ else if (process.env.ENV=="test") {
 // var logger = {};
 
 
-logger.reportError = function(tag) {
-	return function(err) {
-		console.error(tag + ": " + err);
-	};
-};
+// lop
 module.exports=logger;

@@ -14,23 +14,27 @@ var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
 //TODO: Auth with dynamoDB.
 
-module.exports = function(items, city) {
+module.exports = function(items) {
 	return new Promise(function(resolve, reject) {
 		//TODO: make this a batchputitem for efficiency's sake.
 		if (items == null) {
-			resolve()
-		} else {
-			dynamodb.batchWriteItem(put_params(items), function(err, response) {
-				logger.info("Got dynamo response");
-				if (err) {
-					logger.error("Error posting item to dynamo:" + err);
-					reject(err);
-				} else {
-					logger.info("Item post to dynamo successful:" + response);
-					resolve();
-				}
-			});			
-		;}
+			resolve();
+			return;
+		}
+		var formatted_items = put_params(items);
+		if (!formatted_items) {
+			resolve();
+			return;
+		};
+		dynamodb.batchWriteItem(formatted_items, function(err, response) {
+			if (err) {
+				logger.error("Error posting item to dynamo:" + err);
+				reject(err);
+			} else {
+				logger.info("Item post to dynamo successful\n" + JSON.stringify(response));
+				resolve();
+			}
+		});			
 	});
 }
 
@@ -49,16 +53,22 @@ var put_params = function(items) {
 		           	body:{S:items[i].body},
 		           	date:{S:items[i].date},
 		           	url:{S:items[i].url},
-		           	city:{S:city}
+		           	city:{S:items[i].city}
 	           	}
             }
           });
 	};
 
-	var dynamo_output = {
-	    "RequestItems": {},
-	    ReturnConsumedCapacity: 'NONE'
-	};
-	dynamo_output.RequestItems[process.env.DYNAMODB_NAME] = formatted_items;
-	return dynamo_output;
+	if (formatted_items.length == 0) {
+		//Handle the case where we get a set entirely of null variables. This seems to happen with Houston.
+		return false;
+	} else {
+		var dynamo_output = {
+		    "RequestItems": {},
+		    ReturnConsumedCapacity: 'NONE'
+		};
+		dynamo_output.RequestItems[process.env.DYNAMODB_NAME] = formatted_items;
+		return dynamo_output;		
+	}
+
 };

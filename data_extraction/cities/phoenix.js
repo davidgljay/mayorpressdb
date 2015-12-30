@@ -15,7 +15,7 @@ var base_url = "http://www.phoenix.gov",
 main_url = base_url + "/news/mayor/";
 
 module.exports = function() {
-	var count = 0,
+	var count = 100,
 	done = false,
 	press_releases = [];
 
@@ -25,11 +25,13 @@ module.exports = function() {
 			var sleepBy = 0;
 			for (var i=0; i<100; i++) {
 				count ++;
-				sleepBy += 200;
+				sleepBy += 250;
 				promise_array.push(getPage(main_url+count, sleepBy, {
 					content:'#MSOZoneCell_WebPartWPQ8', 
 					body:'p', 
-					title:'.title'}))
+					title:'.title',
+					city:'Phoenix'
+				}))
 			}
 			Promise.all(promise_array).then(function(results) {
 				press_releases.concat(results);
