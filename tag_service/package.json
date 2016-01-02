@@ -6,6 +6,10 @@
   "scripts": {
     "test": "jasmine-node ./spec"
   },
+  "dependencies": {
+  	"promise":"latest",
+  	"alchemy-api":"~1.3.1"
+  },
   "author": "David Jay",
   "license": "MIT"
 }
