@@ -19,8 +19,6 @@
 		"city#Articles":[],
 	}
 */
-var hash = require('../utils/hash');
-
 
 /*
 * Receives a response with entities, response, and city info. 
@@ -102,11 +100,11 @@ module.exports = function(alchemy_response) {
 
 		tags.push({
 			values:new_tag,
-			update_expressionformat_update_expression(update_expression):
+			update_expression:format_update_expression(update_expression)
 		});
 	};
 	return tags;
-}C
+}
 
 
 //Get list of tags from the Alchemy taxonomy response 

@@ -1,7 +1,8 @@
 var AlchemyAPI = require('alchemy-api'),
 Promise = require('promise'),
 format_tags = require('./format_tags'),
-dynamodb = require('./api/dynamo');
+dynamodb = require('./api/dynamo'),
+config = require('./config');
 
 var alchemy_api = new AlchemyAPI(process.env.ALCHEMY_API_KEY);
 
@@ -49,7 +50,7 @@ module.exports.handler = function(event, context) {
 				var article = {
 					taxonomy:results[0].taxonomy,
 					entities:results[1].entities,
-					article_info:event.Records[i].NewImage.;
+					article_info:event.Records[i].NewImage
 				}
 				return dynamodb.batch_update(format_tags(results));
 			})
@@ -70,7 +71,7 @@ module.exports.handler = function(event, context) {
 
 //Function which returns a promise to deliver a list of tags in an array.
 var get_alchemy = function(url, operation) {
-	return new Promise(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		alchemy_api[operation](url, null, function(result) {
 			if (result.status == 'ERROR') {
 				reject(result);
@@ -78,7 +79,7 @@ var get_alchemy = function(url, operation) {
 				resolve(result);
 			}
 		})
-	}
+	});
 }
 
 

@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk'),
-logger = require('../utils/logger'),
 Promise = require('promise');
 
 // AWS.config.update({
@@ -14,7 +13,7 @@ var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 //Updates a single item in DynamoDB. Assumes that integers and arrays are added rather than updated.
 
 module.exports.update = function(item) {
-	return new Promise(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		dynamodb.updateItem({
 			TableName:process.env.TABLE_NAME,
 			Key:{tag:item.vals[":tag"]},
@@ -31,7 +30,7 @@ module.exports.update = function(item) {
 				resolve(data);
 			}
 		});
-	}
+	});
 }
 
 module.exports.batch_update = function(items) {
