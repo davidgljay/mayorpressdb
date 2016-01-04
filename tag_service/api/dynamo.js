@@ -1,8 +1,6 @@
 var AWS = require('aws-sdk'),
 logger = require('../utils/logger'),
-Deferred = require('promise'),
-hash = require('../utils/hash'),
-logger = require('../utils/logger');
+Promise = require('promise');
 
 AWS.config.update({
 	accessKeyId: process.env.AWS_KEY, 
@@ -12,7 +10,39 @@ AWS.config.update({
 
 var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
 
-//TODO: Auth with dynamoDB.
+
+//Updates a single item in DynamoDB. Assumes that integers and arrays are added rather than updated.
+
+module.exports.update = function(item) {
+	return new Promise(resolve, reject) {
+		dynamodb.updateItem({
+			TableName:process.env.TABLE_NAME,
+			Key:item.vals[":tag"],
+			ReturnValue:'NONE',
+			ReturnItemCollectionMetrics:'NONE',
+			ReturnConsumedCapacity: 'NONE',
+			ExpressionAttributeValues: item.values,
+			UpdateExpression: item.update_expression
+		},
+		function(err, data) {
+			if (err) {
+				reject("Error updating DynamoDB:\n" + err);
+			} else {
+				resolve(data);
+			}
+		});
+	}
+}
+
+module.exports.batch_update = function(items) {
+	var promise_array = [];
+	for (var i = items.length - 1; i >= 0; i--) {
+		promise_array.push(items[i]);
+	};
+	return Promise.all(promise_array);
+}
+//Post up to 25 items to dynamoDB. 
+//TODO: Handle that limitation in this class.
 
 module.exports.post = function(items) {
 	return new Promise(function(resolve, reject) {
