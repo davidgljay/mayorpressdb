@@ -34,7 +34,11 @@ module.exports.handler = function(event, context) {
 
 	//Extract URLs from event;
 	for (var i = event.Records.length - 1; i >= 0; i--) {
-		var urls = event.Records[i].NewImage.url;
+		var article_info = event.Records[i].NewImage,
+		url = article_info.url;
+
+		//Delete the body, it doesn't need to be stored, and could wind up taking up a lot of extra space.
+		delete article_info.body;
 		promise_array.push(
 			Promise.all([
 				get_alchemy(url, 'taxonomy'),
@@ -42,6 +46,11 @@ module.exports.handler = function(event, context) {
 			])
 			.then( 
 			function(results) {
+				var article = {
+					taxonomy:results[0].taxonomy,
+					entities:results[1].entities,
+					article_info:event.Records[i].NewImage.;
+				}
 				return dynamodb.batch_update(format_tags(results));
 			})
 		);

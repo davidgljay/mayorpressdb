@@ -17,8 +17,8 @@ module.exports.update = function(item) {
 	return new Promise(resolve, reject) {
 		dynamodb.updateItem({
 			TableName:process.env.TABLE_NAME,
-			Key:item.vals[":tag"],
-			ReturnValue:'NONE',
+			Key:{tag:item.vals[":tag"]},
+			ReturnValues:'NONE',
 			ReturnItemCollectionMetrics:'NONE',
 			ReturnConsumedCapacity: 'NONE',
 			ExpressionAttributeValues: item.values,
