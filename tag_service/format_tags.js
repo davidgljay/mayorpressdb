@@ -98,7 +98,7 @@ module.exports = function(alchemy_response) {
 			update_expression.list_append.push(person_id + 'articles');
 		};
 		tags.push({
-			variables:new_tag,
+			values:new_tag,
 			update_expressionformat_update_expression(update_expression):
 		});
 	};
