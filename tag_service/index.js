@@ -1,5 +1,7 @@
 var AlchemyAPI = require('alchemy-api'),
-Promise = require('promise');
+Promise = require('promise'),
+format_tags = require('./format_tags'),
+dynamodb = require('./api/dynamo');
 
 var alchemy_api = new AlchemyAPI(process.env.ALCHEMY_API_KEY);
 
@@ -11,8 +13,6 @@ var alchemy_api = new AlchemyAPI(process.env.ALCHEMY_API_KEY);
 *  {"tag":
 		{
 		"count":1,
-		"dates":[
-		]
 		"articles":[
 			{
 				"title":"TITLE",
@@ -21,37 +21,55 @@ var alchemy_api = new AlchemyAPI(process.env.ALCHEMY_API_KEY);
 				"hash":"adshf98yh"
 			}
 		],
-		"people":[
-			{
-				"name":"Mr. Mayor",
-				"mentions":""
-			}
-		],
-		"cities":[
-			{
-				"New York": {
-					"count":1,
-					"dates":[
-					]
-				}
-			}
-		]
+		"person1Name":"Mr. Mayor",
+		"person1Articles":[],
+		"city1Name":"New York",
+		"city1Count:1,
+		"city1Articles":[],
 	}
 */
 
 module.exports.handler = function(event, context) {
+	var promise_array=[];
+
+	//Extract URLs from event;
+	for (var i = event.Records.length - 1; i >= 0; i--) {
+		var urls = event.Records[i].NewImage.url;
+		promise_array.push(
+			Promise.all([
+				get_alchemy(url, 'taxonomy'),
+				get_alchemy(url, 'entities')
+			])
+			.then( 
+			function(results) {
+				return dynamodb.batch_update(format_tags(results));
+			})
+		);
+	};
+
+	Promise.all(promise_array)
+		.then(
+			function(results) {
+				context.succeed(event.Records.length + 'articles AlchemyAPIed and posted to DynamoDB');
+			}, 
+			function(err) {
+				context.fail(err);
+			})
 
 }
 
 
 //Function which returns a promise to deliver a list of tags in an array.
-var get_tags = function(url) {
-
-}
-
-//Function which returns a promise to deliver a list of people mentioned in the press release.
-var get_entities = function(url) {
-
+var get_alchemy = function(url, operation) {
+	return new Promise(resolve, reject) {
+		alchemy_api[operation](url, null, function(result) {
+			if (result.status == 'ERROR') {
+				reject(result);
+			} else {
+				resolve(result);
+			}
+		})
+	}
 }
 
 
