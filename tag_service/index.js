@@ -1,5 +1,5 @@
 var AlchemyAPI = require('alchemy-api'),
-Promise = require('promise'),
+// Promise = require('promise'), //Lint seems to think that this is already defined??
 format_tags = require('./format_tags'),
 dynamodb = require('./api/dynamo'),
 config = require('./config');
@@ -45,17 +45,9 @@ module.exports.handler = function(event, context) {
 				get_alchemy(url, 'taxonomy'),
 				get_alchemy(url, 'entities')
 			])
-			.then( 
-			function(results) {
-				var article = {
-					taxonomy:results[0].taxonomy,
-					entities:results[1].entities,
-					article_info:event.Records[i].NewImage
-				}
-				return dynamodb.batch_update(format_tags(results));
-			})
+			.then(format_and_post)
 		);
-	};
+	}
 
 	Promise.all(promise_array)
 		.then(
@@ -64,9 +56,18 @@ module.exports.handler = function(event, context) {
 			}, 
 			function(err) {
 				context.fail(err);
-			})
+			});
 
-}
+};
+
+var format_and_post = function(results) {
+	var article = {
+		taxonomy:results[0].taxonomy,
+		entities:results[1].entities,
+		article_info:event.Records[i].NewImage
+	};
+	return dynamodb.batch_update(format_tags(results));
+};
 
 
 //Function which returns a promise to deliver a list of tags in an array.
@@ -78,9 +79,9 @@ var get_alchemy = function(url, operation) {
 			} else {
 				resolve(result);
 			}
-		})
+		});
 	});
-}
+};
 
 
 

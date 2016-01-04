@@ -7,7 +7,7 @@ Promise = require('promise');
 // 	region: process.env.AWS_REGION
 // })
 
-var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
+var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'});
 
 
 //Updates a single item in DynamoDB. Assumes that integers and arrays are added rather than updated.
@@ -31,22 +31,22 @@ module.exports.update = function(item) {
 			}
 		});
 	});
-}
+};
 
 module.exports.batch_update = function(items) {
 	var promise_array = [];
 	for (var i = items.length - 1; i >= 0; i--) {
 		promise_array.push(items[i]);
-	};
+	}
 	return Promise.all(promise_array);
-}
+};
 //Post up to 25 items to dynamoDB. 
 //TODO: Handle that limitation in this class.
 
 module.exports.post = function(items) {
 	return new Promise(function(resolve, reject) {
 		//TODO: make this a batchputitem for efficiency's sake.
-		if (items == null) {
+		if (items === null) {
 			resolve();
 			return;
 		}
@@ -54,7 +54,7 @@ module.exports.post = function(items) {
 		if (!formatted_items) {
 			resolve();
 			return;
-		};
+		}
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error posting item to dynamo:" + err);
@@ -65,13 +65,13 @@ module.exports.post = function(items) {
 			}
 		});			
 	});
-}
+};
 
 var put_params = function(items) {
 	var formatted_items = [];
 	for (var i = items.length - 1; i >= 0; i--) {
 		//Some items will be null, skip them.
-		if (items[i] == null) {
+		if (items[i] === null) {
 			continue;
 		}
 		formatted_items.push({
@@ -79,9 +79,9 @@ var put_params = function(items) {
 				Item:  items[i]
             }
           });
-	};
+	}
 
-	if (formatted_items.length == 0) {
+	if (formatted_items.length === 0) {
 		//Handle the case where we get a set entirely of null variables. This seems to happen with Houston.
 		return false;
 	} else {

@@ -65,7 +65,7 @@ module.exports = function(alchemy_response) {
 			add:[],
 			set:[],
 			list_append:[]
-		}
+		};
 		//Add core tag info
 		var new_tag = {
 			':tag':{S:tag_list[i]},
@@ -93,18 +93,18 @@ module.exports = function(alchemy_response) {
 			if (people_list[j].disambiguated) {
 				new_tag[':person_details' + person_id] = {M:people_list[j].disambiguated};
 				update_expression.set.push(':person_details' + person_id);
-			};
+			}
 			new_tag[':person_articles' + person_id] = {L:[alchemy_response.article_info]};
 			update_expression.list_append.push(':person_articles' + person_id);
-		};
+		}
 
 		tags.push({
 			values:new_tag,
 			update_expression:format_update_expression(update_expression)
 		});
-	};
+	}
 	return tags;
-}
+};
 
 
 //Get list of tags from the Alchemy taxonomy response 
@@ -116,11 +116,11 @@ var get_tag_list = function(alchemy_tags) {
 		}
 		var labels = alchemy_tags[i].label.split('/').slice(1);
 		for (var j = labels.length - 1; j >= 0; j--) {
-			tag_list.push(labels[j])
-		};
-	};
+			tag_list.push(labels[j]);
+		}
+	}
 	return tag_list;
-}
+};
 
 //Get list of people. from Alchemy entities response
 var get_people_list = function(alchemy_entities) {
@@ -134,36 +134,36 @@ var get_people_list = function(alchemy_entities) {
 			people_list.push({
 				name:name,
 				details:disambiguated
-			})
+			});
 		}
-	};
+	}
 	return people_list;
-}
+};
 
 var format_update_expression = function(update_expression) {
 	//Add ADD expressions
 	var formatted = 'ADD';
 	for (var i = update_expression.add.length - 1; i >= 0; i--) {
 		formatted += ' ' + update_expression.add[i].slice(1) + ' ' + update_expression.add[i] + ',';
-	};
+	}
 
 	//Remove trailing comma.
 	formatted = formatted.slice(0,-1);
 
 	//Add SET expressions
 	formatted += ' SET';
-	for (var i = update_expression.set.length - 1; i >= 0; i--) {
-		formatted += ' ' + update_expression.set[i].slice(1) + '= if_not_exists(' + 
-		update_expression.set[i].slice(1) + ', ' + update_expression.set[i] + '),';
-	};
+	for (var j = update_expression.set.length - 1; j >= 0; j--) {
+		formatted += ' ' + update_expression.set[j].slice(1) + '= if_not_exists(' + 
+		update_expression.set[j].slice(1) + ', ' + update_expression.set[j] + '),';
+	}
 	//Add list_append expressions
-	for (var i = update_expression.list_append.length - 1; i >= 0; i--) {
-		formatted += ' ' + update_expression.list_append[i].slice(1) + '=list_append(' + 
-		update_expression.list_append[i].slice(1) + ', ' + update_expression.list_append[i] + '),';
-	};
+	for (var k = update_expression.list_append.length - 1; k >= 0; k--) {
+		formatted += ' ' + update_expression.list_append[k].slice(1) + '=list_append(' + 
+		update_expression.list_append[k].slice(1) + ', ' + update_expression.list_append[k] + '),';
+	}
 
 	//Remove trailing comma
 	formatted = formatted.slice(0,-1);
 
 	return formatted;
-}
+};
