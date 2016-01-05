@@ -98,6 +98,19 @@ module.exports = function(alchemy_response) {
 			update_expression.list_append.push(':person_articles' + person_id);
 		}
 
+		//Add cross-tags
+		for (var j = tag_list.length - 1; j >= 0; j--) {
+			if (j==i) {
+				continue;
+			}
+			var tag_id = tag_list[j];
+			new_tag[':tag_name' + tag_id] = {S:tag_id};
+			update_expression.set.push(':tag_name' + tag_id);
+
+			new_tag[':tag_articles' + tag_id] = {L:[alchemy_response.article_info]};
+			update_expression.list_append.push(':tag_articles' + tag_id);
+		};
+
 		tags.push({
 			values:new_tag,
 			update_expression:format_update_expression(update_expression)
