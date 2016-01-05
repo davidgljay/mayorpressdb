@@ -19,8 +19,4 @@ else if (process.env.ENV=="test") {
 	});
 }
 
-// var logger = {};
-
-
-// lop
 module.exports=logger;
