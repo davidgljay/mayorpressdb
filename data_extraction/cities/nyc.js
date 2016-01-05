@@ -14,11 +14,7 @@ module.exports = function() {
   logger.info("NYC");
   return new Promise(function (resolve, reject) {
     var nextList = function(n) {
-      // if (n>5) {
-      //   resolve(press_releases);
-      //   return;
-      // }
-      logger.info("Getting NYC page:" + n)
+      logger.info("Getting NYC page:" + n);
       getList(nyc_url.replace("{n}", n))
         .then(
           //On success
@@ -28,7 +24,7 @@ module.exports = function() {
             } else {
               press_releases.concat(results);
               nextList(n+1);          
-            };
+            }
           }, 
           //On error.
           function(err) {
@@ -36,9 +32,9 @@ module.exports = function() {
           }
         );    
     };
-    nextList(1);
+    nextList(700);
   });
-}
+};
   
   //TODO: Add short sleep.
 
@@ -53,23 +49,26 @@ var getList = function(url) {
           body += chunk;
         });
       res.on('end', function() {
-        body = /(.+-->)(.+)(<!-.+)/.exec(body)[2];
-        var response = JSON.parse(body).results.assets;
-        for (var i in response) {
-          press_releases.push({
-            "title": response[i].metadata['TeamSite/Metadata/Title'],
-            "body":  response[i].metadata['TeamSite/Metadata/Description'],
-            "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']).toISOString(),
-            "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL'],
-            "city": "New York"
-          });
-        };
-        resolve(press_releases);
-      })
+          body = /(.+-->)(.+)(<!-.+)/.exec(body)[2];
+          var body_obj = JSON.parse(body);
+          var response = body_obj.results.assets;
+          if (parseInt(body_obj.pagination.currentPage)>parseInt(body_obj.pagination.numPages)) {
+            resolve('done');
+          }
+          for (var i in response) {
+            press_releases.push({
+              "title": response[i].metadata['TeamSite/Metadata/Title'],
+              "body":  response[i].metadata['TeamSite/Metadata/Description'],
+              "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']).toISOString(),
+              "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL'],
+              "city": "New York"
+            });
+          }
+          resolve(press_releases);
+        });
     }).on('error', function(e) {
       logger.error("Error in NYC:" + err);
       reject(e.message);
     });    
-  })
-
-}
+  });
+};
