@@ -9,23 +9,23 @@ module.exports.handler = function(event, context) {
       DryRun: false
     };
     ec2.startInstances(instanceParams, function(err, data) {
-        if (err) {
-            context.fail(err);
-        }
-        
+        if (err) context.fail(err);
     })
     ec2.waitFor('instanceRunning', instanceParams, function(err, data) {
         if (err) context.fail(err);
-        else {
-            var ContainerParams = {
-              taskDefinition: 'MayorsDB_Data:2', /* required */
-              cluster: 'mayorsdb',
-              count: 1
-            };
-            ecs.runTask(ContainerParams, function(err, data) {
-              if (err) context.fail(err); // an error occurred
-              else     context.succeed("Successfully started task\n" + JSON.stringify(data));
-            });
-        }
+        else runTask();
     });
 };
+
+var runTask = function() {
+    var ContainerParams = {
+      taskDefinition: 'MayorsDB_Data:5',
+      cluster: 'mayorsdb',
+      count: 1
+    };
+    ecs.runTask(ContainerParams, function(err, data) {
+      if (err) context.fail(err);
+      else if (data.failure) setInterval(runTask(), 250);
+      else context.succeed("Successfully started task\n" + JSON.stringify(data));
+  });
+}
