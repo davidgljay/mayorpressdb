@@ -25,7 +25,7 @@ module.exports = function() {
 			var sleepBy = 0;
 			for (var i=0; i<100; i++) {
 				count ++;
-				sleepBy += 250;
+				sleepBy += 500;
 				promise_array.push(getPage(main_url+count, sleepBy, {
 					content:'#MSOZoneCell_WebPartWPQ8', 
 					body:'p', 
