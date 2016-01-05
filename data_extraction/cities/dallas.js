@@ -1,6 +1,6 @@
 var http = require('http'),
 Promise = require('promise'),
-getPage = require('../utils/getPage'),
+getPage = require('../utils/getpage'),
 logger = require('../utils/logger');
 
 //Dallas stores an archive of press releases in a JSON file. Pull the links from this JSON file and get each press release.
