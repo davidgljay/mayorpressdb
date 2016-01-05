@@ -32,7 +32,7 @@ module.exports = function() {
           }
         );    
     };
-    nextList(700);
+    nextList(1);
   });
 };
   
