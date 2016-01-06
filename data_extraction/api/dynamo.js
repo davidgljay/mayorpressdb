@@ -8,16 +8,15 @@ AWS.config.update({
 	accessKeyId: process.env.AWS_KEY, 
 	secretAccessKey: process.env.AWS_SECRET, 
 	region: process.env.AWS_REGION
-})
+});
 
-var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'})
+var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'});
 
 //TODO: Auth with dynamoDB.
 
 module.exports = function(items) {
 	return new Promise(function(resolve, reject) {
-		//TODO: make this a batchputitem for efficiency's sake.
-		if (items == null) {
+		if (items === null) {
 			resolve();
 			return;
 		}
@@ -25,24 +24,54 @@ module.exports = function(items) {
 		if (!formatted_items) {
 			resolve();
 			return;
-		};
+		}
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
-				logger.error("Error posting item to dynamo:" + err);
+				logger.info("Error posting item to dynamo\n" + err);
 				reject(err);
 			} else {
-				logger.info("Item post to dynamo successful\n" + JSON.stringify(response));
-				resolve();
+				logger.info("Item post to dynamo successful\n" );
+				if (response.UnprocessedItems.keys.length > 0) {
+					//Retry the post once if there are unprocessed items.
+					repost(resolve, reject);
+				} else {
+					setInterval(function() {
+						resolve();
+					},200);
+				}
+
 			}
 		});			
 	});
-}
+};
+
+var repost = function(resolve, reject) {
+	setInterval(
+		function() {
+			var retry = {
+			    "RequestItems": {},
+			    ReturnConsumedCapacity: 'NONE'
+			};
+			retry[process.env.DYNAMODB_NAME] = response.UnprocessedItems;
+			dynamodb.batchWriteItem(retry, function(err, response) {
+				if (err) {
+					logger.error("Error reposting item to dynamo\n" + err);
+					reject(err);
+				} else {
+					logger.info("Reposted items to DynamoDB.");
+					setInterval(function() {
+						resolve();
+					},200);
+				}
+			});
+		},150);
+};
 
 var put_params = function(items) {
 	var formatted_items = [];
 	for (var i = items.length - 1; i >= 0; i--) {
 		//Some items will be null, skip them.
-		if (items[i] == null) {
+		if (items[i] === null) {
 			continue;
 		}
 		formatted_items.push({
@@ -57,10 +86,10 @@ var put_params = function(items) {
 	           	}
             }
           });
-	};
+	}
 
-	if (formatted_items.length == 0) {
-		//Handle the case where we get a set entirely of null variables. This seems to happen with Houston.
+	if (formatted_items.length === 0) {
+		//Handle the case where we get a set entirely of null variables. This seems to be possible with Houston.
 		return false;
 	} else {
 		var dynamo_output = {
