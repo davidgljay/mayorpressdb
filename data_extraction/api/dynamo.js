@@ -70,16 +70,19 @@ var repost = function(response, resolve, reject) {
 };
 
 var put_params = function(items) {
-	var formatted_items = [];
+	var formatted_items = [],
+	hashes = new Set();
+
 	for (var i = items.length - 1; i >= 0; i--) {
-		//Some items will be null, skip them.
-		if (items[i] === null) {
+		//Some items will be null, skip them. Also confirm that there are no duplicate hashes.
+		var urlhash = hash(items[i].url + "_" + items[i].date)
+		if (items[i] === null || hashes.has(urlhash)) {
 			continue;
 		}
 		formatted_items.push({
 			PutRequest: {
 				Item:  {
-					hash:{S:hash(items[i].url + "_" + items[i].date).toString()},
+					hash:{S:hash.toString()},
 		           	title:{S:items[i].title},
 		           	body:{S:items[i].body},
 		           	date:{S:items[i].date},
@@ -88,6 +91,7 @@ var put_params = function(items) {
 	           	}
             }
           });
+		hashes.add(urlhash);
 	}
 
 	if (formatted_items.length === 0) {
