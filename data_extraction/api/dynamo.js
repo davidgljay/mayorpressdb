@@ -30,12 +30,14 @@ module.exports = function(items) {
 				logger.info("Error posting item to dynamo\n" + err);
 				reject(err);
 			} else {
-				logger.info("Item post to dynamo successful\n" );
-				if (response.UnprocessedItems.keys.length > 0) {
+				logger.info("Item post to dynamo successful" );
+				if (Object.keys(response.UnprocessedItems).length > 0) {
 					//Retry the post once if there are unprocessed items.
-					repost(resolve, reject);
+					logger.info(response.UnprocessedItems);
+					logger.info("Reposting " + Object.keys(response.UnprocessedItems).length + " items to dynamoDB.");
+					repost(response, resolve, reject);
 				} else {
-					setInterval(function() {
+					setTimeout(function() {
 						resolve();
 					},200);
 				}
@@ -45,21 +47,21 @@ module.exports = function(items) {
 	});
 };
 
-var repost = function(resolve, reject) {
-	setInterval(
+var repost = function(response, resolve, reject) {
+	setTimeout(
 		function() {
 			var retry = {
 			    "RequestItems": {},
 			    ReturnConsumedCapacity: 'NONE'
 			};
-			retry[process.env.DYNAMODB_NAME] = response.UnprocessedItems;
+			retry.RequestItems = response.UnprocessedItems;
 			dynamodb.batchWriteItem(retry, function(err, response) {
 				if (err) {
 					logger.error("Error reposting item to dynamo\n" + err);
 					reject(err);
 				} else {
-					logger.info("Reposted items to DynamoDB.");
-					setInterval(function() {
+					logger.info("Reposted " + Object.keys(response.UnprocessedItems).length + " items to DynamoDB.");
+					setTimeout(function() {
 						resolve();
 					},200);
 				}

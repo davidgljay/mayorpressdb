@@ -15,6 +15,9 @@ module.exports = function() {
   return new Promise(function (resolve, reject) {
     var nextList = function(n) {
       logger.info("Getting NYC page:" + n);
+      // if (n>=5) {
+      //   resolve(press_releases);
+      // }
       getList(nyc_url.replace("{n}", n))
         .then(
           //On success
