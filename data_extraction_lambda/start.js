@@ -13,13 +13,13 @@ module.exports.handler = function(event, context) {
     })
     ec2.waitFor('instanceRunning', instanceParams, function(err, data) {
         if (err) context.fail(err);
-        else runTask();
+        else runTask(context);
     });
 };
 
-var runTask = function() {
+var runTask = function(context) {
     var ContainerParams = {
-      taskDefinition: 'MayorsDB_Data:5',
+      taskDefinition: 'MayorsDB_Data',
       cluster: 'mayorsdb',
       count: 1
     };
