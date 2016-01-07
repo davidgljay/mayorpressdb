@@ -98,12 +98,12 @@ module.exports = function(alchemy_response) {
 			update_expression.list_append.push(':person_articles' + person_id);
 		}
 
-		//Add cross-tags
+		//Add cross-tags by city
 		for (var j = tag_list.length - 1; j >= 0; j--) {
 			if (j==i) {
 				continue;
 			}
-			var tag_id = tag_list[j];
+			var tag_id = "_" + city + "_" + tag_list[j];
 			new_tag[':tag_name' + tag_id] = {S:tag_id};
 			update_expression.set.push(':tag_name' + tag_id);
 
