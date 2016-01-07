@@ -45,8 +45,8 @@ var processBody = function(data, queries, url) {
 	})
 	var title = content.find(queries.title).text();
 	if (title=='') {
-		logger.error("Failed to find title in " + url);
-		title='Press Release from ' + queries.city;
+		if ($(title)) title = $(title);
+		else title='Press Release from ' + queries.city;
 	}
 	return {
 		'title':title,
