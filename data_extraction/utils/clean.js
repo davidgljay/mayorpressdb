@@ -1,33 +1,36 @@
+var logger = require('./logger');
+
 module.exports = function(items) {
 	var clean_items = [];
 	for (var i = items.length - 1; i >= 0; i--) {
-		if (items[i]===null) {
+		if (items[i]===null || !validate(items[i])) {
 			continue;
 		}
 		items[i].body = items[i].body.replace(/\s+/g,' ');
-		validate(items[i]);
 		clean_items.push(items[i]);
 	}
 	items = remove_duplicate_urls(items);
 	return clean_items;
 };
 
-var validate = function(item) {
+var validate = module.exports.validate = function(item) {
+	var valid = true;
 	for (var key in item) {
-		if (item[key]===null || item[key].length === 0) {
-			logger.error(key + " missing in \n" + JSON.stringify(item));
+		if (item[key]===null || item[key]===undefined || item[key].length === 0) {
+			valid = false;
 		}
 	}
+	return valid;
 };
 
-var remove_duplicate_urls = function(items) {
+var remove_duplicate_urls = module.exports.remove_duplicate_urls = function(items) {
 	var urls = new Set();
 	var deduped_items = [];
-	for (var i = items.length - 1; i >= 0; i--) {
+	for (var i = 0; i < items.length; i++) {
 		if (!urls.has(items[i].url)) {
 			deduped_items.push(items[i]);
-			urls.add(items[i]);
-		} 
+			urls.add(items[i].url);
+		}
 	}
 	return deduped_items;
 };

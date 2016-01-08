@@ -4,7 +4,7 @@
   "description": "An experiment in scraping mayoral press release info.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine-node spec"
   },
   "dependencies": {
     "aws-sdk": "2.2.17",
