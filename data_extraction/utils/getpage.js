@@ -45,7 +45,7 @@ var processBody = function(data, queries, url) {
 	})
 	var title = content.find(queries.title).text();
 	if (title=='') {
-		if ($(title)) title = $(title);
+		if ($('title')) title = $('title').text();
 		else title='Press Release from ' + queries.city;
 	}
 	return {
