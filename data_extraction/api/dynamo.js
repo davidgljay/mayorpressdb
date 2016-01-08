@@ -93,6 +93,7 @@ var put_params = function(items) {
           });
 		hashes.add(urlhash);
 	}
+	
 
 	if (formatted_items.length === 0) {
 		//Handle the case where we get a set entirely of null variables. This seems to be possible with Houston.
