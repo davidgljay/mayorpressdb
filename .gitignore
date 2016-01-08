@@ -1,4 +1,3 @@
 node_modules/
-data_extraction/node_modules
-data_extraction/pdfs
-data_extraction/config.js
+pdfs/
+config.js
