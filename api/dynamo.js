@@ -20,11 +20,14 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
+		logger.info("About to format " + items.length);
 		var formatted_items = put_params(items);
 		if (!formatted_items) {
 			resolve();
 			return;
 		}
+		logger.info("About to post " + formatted_items.length);
+		logger.info(formatted_items);
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.info("Error posting item to dynamo\n" + err);
