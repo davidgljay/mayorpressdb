@@ -82,7 +82,7 @@ var put_params = function(items) {
 		formatted_items.push({
 			PutRequest: {
 				Item:  {
-					hash:{S:hash.toString()},
+					hash:{S:urlhash.toString()},
 		           	title:{S:items[i].title},
 		           	body:{S:items[i].body},
 		           	date:{S:items[i].date},

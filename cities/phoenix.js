@@ -34,7 +34,7 @@ module.exports = function() {
 				}))
 			}
 			Promise.all(promise_array).then(function(results) {
-				press_releases.concat(results);
+				press_releases = press_releases.concat(results);
 				var cont = false;
 				for (var i=0; i<results.length; i++) {
 					if (results[i]!=null) {
