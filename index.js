@@ -17,6 +17,14 @@ var cities = [
 			title:'#headline h2',
 			city:'Los Angeles'
 		}),
+	getCityWithList('http://www.houstontx.gov/mayor/press/index2009-2015.html',
+		{
+			links:'ul.bullets li a',
+			content:'#mainContent',
+			body:'p',
+			title:'.pageTitle, .span6 h1, .title, .subtitle',
+			city:'Houston'
+		}),
 	getCityWithList('http://www.houstontx.gov/mayor/press/',
 		{
 			links:'ul.bullets li a',
