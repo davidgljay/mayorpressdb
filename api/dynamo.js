@@ -20,13 +20,11 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
-		logger.info("About to format " + items.length);
 		var formatted_items = put_params(items);
 		if (!formatted_items) {
 			resolve();
 			return;
 		}
-		logger.info("About to post " + formatted_items.length);
 		logger.info(formatted_items);
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
@@ -77,15 +75,17 @@ var put_params = function(items) {
 	hashes = new Set();
 
 	for (var i = items.length - 1; i >= 0; i--) {
+		logger.info(items[i]);
 		//Some items will be null, skip them. Also confirm that there are no duplicate hashes.
-		var urlhash = hash(items[i].url + "_" + items[i].date)
-		if (items[i] === null || hashes.has(urlhash)) {
-			continue;
-		}
+	
+		if (items[i] === null) continue;
+
+		var urlid = items[i].url + ":" + items[i].date;
+		if (hashes.has(urlid)) continue;
 		formatted_items.push({
 			PutRequest: {
 				Item:  {
-					hash:{S:urlhash.toString()},
+					hash:{S:urlid},
 		           	title:{S:items[i].title},
 		           	body:{S:items[i].body},
 		           	date:{S:items[i].date},
@@ -94,7 +94,7 @@ var put_params = function(items) {
 	           	}
             }
           });
-		hashes.add(urlhash);
+		hashes.add(urlid);
 	}
 	
 
