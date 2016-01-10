@@ -1,8 +1,7 @@
 var AWS = require('aws-sdk'),
 logger = require('../utils/logger'),
 Deferred = require('promise'),
-hash = require('../utils/hash'),
-logger = require('../utils/logger');
+hash = require('../utils/hash');
 
 AWS.config.update({
 	accessKeyId: process.env.AWS_KEY, 
@@ -25,31 +24,36 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
-		logger.info(formatted_items);
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
-				logger.info("Error posting item to dynamo\n" + err);
 				reject(err);
 			} else {
 				logger.info("Item post to dynamo successful" );
 				if (Object.keys(response.UnprocessedItems).length > 0) {
 					//Retry the post once if there are unprocessed items.TODO: make this exponential.
 					logger.info("Reposting " + Object.keys(response.UnprocessedItems).length + " items to dynamoDB.");
-					repost(response, resolve, reject);
+					resolve(repost(response, 0));
 				} else {
 					setTimeout(function() {
 						resolve();
-					},200);
+					},250);
 				}
 
-			}
+	2	}
 		});			
 	});
 };
 
-var repost = function(response, resolve, reject) {
-	setTimeout(
-		function() {
+
+//Try reposting 5 times, if that doesn't work then give up.
+var repost = function(response, tries) {
+	return new Promise(function (resolve, reject) {
+		if (tries>=5) {
+			logger.info("Giving up on reposting " + Object.keys(response.UnprocessedItems) + " entries");
+			resolve();
+			return;
+		}
+		setTimeout(function() {
 			var retry = {
 			    "RequestItems": {},
 			    ReturnConsumedCapacity: 'NONE'
@@ -59,14 +63,14 @@ var repost = function(response, resolve, reject) {
 				if (err) {
 					logger.error("Error reposting item to dynamo\n" + err);
 					reject(err);
+				} else if (Object.keys(response.UnprocessedItems).length > 0) {
+					repost(response, tries++)
 				} else {
-					logger.info("Reposted " + Object.keys(response.UnprocessedItems).length + " items to DynamoDB.");
-					setTimeout(function() {
-						resolve();
-					},200);
+					resolve();
 				}
 			});
-		},150);
+		}, 250);
+	});
 };
 
 var put_params = function(items) {

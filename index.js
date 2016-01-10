@@ -91,7 +91,10 @@ var crawlCity = function(i) {
 				return crawlCity(i+1);
 			} else {
 				logger.info("Done crawling all cities.");
+				return;
 			}
+		}, function(err) {
+			logger.error(err);
 		});
 };
 crawlCity(0);
