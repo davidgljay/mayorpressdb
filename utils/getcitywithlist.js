@@ -20,7 +20,7 @@ module.exports = function(url, queries) {
 		return new Promise(function(resolve, reject) {
 		//Iterate through pages with lists of press releases
 			var press_releases = [];
-			var nextListPage = function(n) {
+			var nextListPage = function(n, lastresults) {
 				sleepcount = 0;
 			 	logger.info("Getting " + queries.city + " page " + n);
 			 	// if (n>5) {
@@ -31,13 +31,13 @@ module.exports = function(url, queries) {
 					.then(
 						//On success
 						function(results) {
-							if (results == "done") {
+							if (results == "done" || results==lastresults) {
 								resolve(press_releases);
 							} else if (!url.includes('{n}')) {
 								resolve(results);
-							}else {
+							} else {
 								press_releases = press_releases.concat(results);
-								nextListPage(n+1);
+								nextListPage(n+1, results);
 							};
 						}, 
 						//On error.
@@ -47,7 +47,7 @@ module.exports = function(url, queries) {
 						}
 					);		
 			};
-			nextListPage(1);
+			nextListPage(1, null);
 		});		
 	}
 
