@@ -15,7 +15,6 @@ module.exports = function(url, sleepBy, queries) {
 					data += chunk;
 				});
 				res.on('end', function() {
-					logger.info("Successfully got: " + url);
 					resolve(processBody(data, queries, url));
 				});
 			}).on('error', function(err) {

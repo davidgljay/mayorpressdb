@@ -53,6 +53,7 @@ var repost = function(response, tries) {
 			resolve();
 			return;
 		}
+		logger.info("Trying to repost " + Object.keys(response.UnprocessedItems) + " entries.");
 		setTimeout(function() {
 			var retry = {
 			    "RequestItems": {},
@@ -64,7 +65,7 @@ var repost = function(response, tries) {
 					logger.error("Error reposting item to dynamo\n" + err);
 					reject(err);
 				} else if (Object.keys(response.UnprocessedItems).length > 0) {
-					repost(response, tries++)
+					resolve(repost(response, tries++));
 				} else {
 					resolve();
 				}

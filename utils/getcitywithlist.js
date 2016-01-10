@@ -72,7 +72,7 @@ var getListPage = function(url, queries) {
 					resolve("done");
 				}
 				for (var i=0; i<links.length; i++) {
-					if (i%100==0) {
+					if (i%100==0 && i>0) {
 						logger.info("Processed 100 pages from " + queries.city + " at " + new Date());
 					}
 					var sleep = sleepBy();

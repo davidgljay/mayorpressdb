@@ -9,8 +9,6 @@ require('https').globalAgent.maxSockets = 50;
 //Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
 
 var cities = [
-	require('./cities/phoenix'),
-	require('./cities/nyc'),
 	getCityWithList('http://www.lamayor.org/press_release?page={n}',
 		{
 			links: '.page_excerpt h3 a',
@@ -60,7 +58,9 @@ var cities = [
 			city:'San Antonio'
 		}),
 	require('./cities/dallas'),
-	require('./cities/sanjose')
+	require('./cities/sanjose'),
+	require('./cities/phoenix'),
+	require('./cities/nyc')
 
 ];
 
