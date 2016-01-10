@@ -33,8 +33,7 @@ module.exports = function(items) {
 			} else {
 				logger.info("Item post to dynamo successful" );
 				if (Object.keys(response.UnprocessedItems).length > 0) {
-					//Retry the post once if there are unprocessed items.
-					logger.info(response.UnprocessedItems);
+					//Retry the post once if there are unprocessed items.TODO: make this exponential.
 					logger.info("Reposting " + Object.keys(response.UnprocessedItems).length + " items to dynamoDB.");
 					repost(response, resolve, reject);
 				} else {
@@ -75,7 +74,6 @@ var put_params = function(items) {
 	hashes = new Set();
 
 	for (var i = items.length - 1; i >= 0; i--) {
-		logger.info(items[i]);
 		//Some items will be null, skip them. Also confirm that there are no duplicate hashes.
 	
 		if (items[i] === null) continue;
