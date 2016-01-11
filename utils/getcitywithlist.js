@@ -31,16 +31,16 @@ module.exports = function(url, queries) {
 					.then(
 						//On success
 						function(results) {
-							if (results == "done" || results==lastresults) {
+							if (results == "done" || arraysEqual(results,lastresults)) {
 								resolve(press_releases);
 							} else if (!url.includes('{n}')) {
 								resolve(results);
 							} else {
 								press_releases = press_releases.concat(results);
 								nextListPage(n+1, results);
-							};
+							}
 						}, 
-						//On error.
+						//On error.\
 						function(err) {
 							logger.error("Error in getCityWithList");
 							reject(err);
@@ -49,7 +49,7 @@ module.exports = function(url, queries) {
 			};
 			nextListPage(1, null);
 		});		
-	}
+	};
 
 };
 
@@ -68,23 +68,23 @@ var getListPage = function(url, queries) {
 			res.on("end", function() {
 				var links = getLinks(body, splitUrl[1], queries.links),
 				promise_array = [];
-				if (links.length == 0) {
+				if (links.length === 0) {
 					resolve("done");
 				}
 				for (var i=0; i<links.length; i++) {
-					if (i%100==0 && i>0) {
+					if (i%100===0 && i>0) {
 						logger.info("Processed 100 pages from " + queries.city + " at " + new Date());
 					}
 					var sleep = sleepBy();
-					promise_array.push(getPage(links[i], sleep, queries))
+					promise_array.push(getPage(links[i], sleep, queries));
 				}
 				Promise.all(promise_array).then(function(results) {
 					resolve(results);
 				}, function(err) {
 					logger.error("Error fetching URL");
 					reject("Error fetching url" +  err);
-				})
-			})
+				});
+			});
 		});		
 	});
 };
@@ -92,4 +92,18 @@ var getListPage = function(url, queries) {
 var sleepBy = function() {
 	sleepcount += 250;
 	return sleepcount;
+};
+
+function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null) return false;
+  if (a.length != b.length) return false;
+
+  a = a.sort();
+  b = b.sort();
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 }
