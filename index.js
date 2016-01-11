@@ -9,6 +9,14 @@ require('https').globalAgent.maxSockets = 50;
 //Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
 
 var cities = [
+	getCityWithList('http://www.cityofchicago.org/city/en/depts/mayor/press_room/press_releases.{n}.html?numPerPage=100',
+		{
+			links: '.pressReleaseList .content a',
+			content: '#content-content',
+			body: 'p',
+			title: 'h1',
+			city:'Chicago'
+		}),
 	getCityWithList('http://www.lamayor.org/press_release?page={n}',
 		{
 			links: '.page_excerpt h3 a',
@@ -40,14 +48,6 @@ var cities = [
 			body: 'p',
 			title: 'h3',
 			city:'San Diego'
-		}),
-	getCityWithList('http://www.cityofchicago.org/city/en/depts/mayor/press_room/press_releases.{n}.html?numPerPage=100',
-		{
-			links: '.pressReleaseList .content a',
-			content: '#content-content',
-			body: 'p',
-			title: 'h1',
-			city:'Chicago'
 		}),
 	getCityWithList('http://cityofphiladelphia.wordpress.com/category/press-release/mayors-press-releases/page/{n}',
 		{

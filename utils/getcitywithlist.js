@@ -31,7 +31,7 @@ module.exports = function(url, queries) {
 					.then(
 						//On success
 						function(results) {
-							if (results == "done" || arraysEqual(results,lastresults)) {
+							if (results == "done" || (lastresults && lastresults[0].url == results[0].url)) {
 								resolve(press_releases);
 							} else if (!url.includes('{n}')) {
 								resolve(results);
@@ -78,8 +78,8 @@ var getListPage = function(url, queries) {
 					var sleep = sleepBy();
 					promise_array.push(getPage(links[i], sleep, queries));
 				}
-				Promise.all(promise_array).then(function(results) {
-					resolve(results);
+				Promise.all(promise_array).then(function(pages) {
+					resolve(pages);
 				}, function(err) {
 					logger.error("Error fetching URL");
 					reject("Error fetching url" +  err);
@@ -94,16 +94,16 @@ var sleepBy = function() {
 	return sleepcount;
 };
 
-function arraysEqual(a, b) {
-  if (a === b) return true;
-  if (a === null || b === null) return false;
-  if (a.length != b.length) return false;
+// function arraysEqual(a, b) {
+//   if (a === b) return true;
+//   if (a === null || b === null) return false;
+//   if (a.length != b.length) return false;
 
-  a = a.sort();
-  b = b.sort();
+//   a = a.sort();
+//   b = b.sort();
 
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
+//   for (var i = 0; i < a.length; ++i) {
+//     if (a[i] !== b[i]) return false;
+//   }
+//   return true;
 }
