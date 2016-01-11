@@ -16,7 +16,7 @@ module.exports = function(items) {
 var validate = module.exports.validate = function(item) {
 	var valid = true;
 	for (var key in item) {
-		if (item[key]===null || item[key]===undefined || item[key].length === 0) {
+		if (item[key]===null || item[key]===undefined || item[key].length === 0 || item[key]=='' ) {
 			valid = false;
 		}
 	}
