@@ -63,7 +63,6 @@ var repost = function(response, tries) {
 			dynamodb.batchWriteItem(retry, function(err, response) {
 				if (err) {
 					logger.error("Error reposting item to dynamo\n" + err);
-					reject(err);
 				} else if (Object.keys(response.UnprocessedItems).length > 0) {
 					resolve(repost(response, tries++));
 				} else {
