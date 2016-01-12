@@ -85,6 +85,10 @@ var put_params = function(items) {
 
 		var urlid = items[i].url + ":" + items[i].date;
 		if (hashes.has(urlid)) continue;
+		for (var key in items[i]) {
+			if (items[i][key]=="") continue;
+		};
+		if (urlid=="") continue;
 		formatted_items.push({
 			PutRequest: {
 				Item:  {

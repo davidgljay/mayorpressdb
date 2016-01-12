@@ -23,10 +23,6 @@ module.exports = function(url, queries) {
 			var nextListPage = function(n, lastresults) {
 				sleepcount = 0;
 			 	logger.info("Getting " + queries.city + " page " + n);
-			 	// if (n>5) {
-			 	// 	resolve(press_releases);
-			 	// 	return;
-			 	// }
 				getListPage(url.replace("{n}", n), queries)
 					.then(
 						//On success
