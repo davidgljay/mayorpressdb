@@ -26,18 +26,18 @@ module.exports = function(items) {
 		}
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
-				logger.error("Error in batchWriteItem for:\n" + formatted_items + "\n" + err);
+				logger.error("Error in batchWriteItem for:\n" + err);
+				logger.error(formatted_items);
+			}
+			if (Object.keys(response.UnprocessedItems).length > 0) {
+				//Retry the post once if there are unprocessed items.TODO: make this exponential.
+				logger.info("Reposting " + Object.keys(response.UnprocessedItems).length + " items to dynamoDB.");
+				resolve(repost(response, 0));
 			} else {
-				logger.info("Item post to dynamo successful" );
-				if (Object.keys(response.UnprocessedItems).length > 0) {
-					//Retry the post once if there are unprocessed items.TODO: make this exponential.
-					logger.info("Reposting " + Object.keys(response.UnprocessedItems).length + " items to dynamoDB.");
-					resolve(repost(response, 0));
-				} else {
-					setTimeout(function() {
-						resolve();
-					},250);
-				}
+				setTimeout(function() {
+					resolve();
+				},250);
+			}
 
 	2	}
 		});			
