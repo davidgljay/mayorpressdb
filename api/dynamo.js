@@ -26,7 +26,7 @@ module.exports = function(items) {
 		}
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
-				reject(err);
+				logger.error("Error in batchWriteItem for:\n" + formatted_items + "\n" + err);
 			} else {
 				logger.info("Item post to dynamo successful" );
 				if (Object.keys(response.UnprocessedItems).length > 0) {
