@@ -27,7 +27,7 @@ module.exports = function(items) {
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
-				logger.error(formatted_items);
+				// logger.error(formatted_items);
 			}
 			if (Object.keys(response.UnprocessedItems).length > 0) {
 				//Retry the post once if there are unprocessed items.TODO: make this exponential.
