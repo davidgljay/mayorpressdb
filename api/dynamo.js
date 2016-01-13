@@ -28,6 +28,8 @@ module.exports = function(items) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
 				// logger.error(formatted_items);
+				resolve();
+				return;
 			}
 			if (Object.keys(response.UnprocessedItems).length > 0) {
 				//Retry the post once if there are unprocessed items.TODO: make this exponential.
@@ -36,7 +38,7 @@ module.exports = function(items) {
 			} else {
 				setTimeout(function() {
 					resolve();
-				},250);
+				},100);
 			}
 		});			
 	});
@@ -47,11 +49,11 @@ module.exports = function(items) {
 var repost = function(response, tries) {
 	return new Promise(function (resolve, reject) {
 		if (tries>=5) {
-			logger.info("Giving up on reposting " + Object.keys(response.UnprocessedItems) + " entries");
+			logger.info("Giving up on reposting " + Object.keys(response.UnprocessedItems).length + " entries");
 			resolve();
 			return;
 		}
-		logger.info("Trying to repost " + Object.keys(response.UnprocessedItems) + " entries.");
+		logger.info("Trying to repost " + Object.keys(response.UnprocessedItems).length + " entries.");
 		setTimeout(function() {
 			var retry = {
 			    "RequestItems": {},
@@ -67,7 +69,7 @@ var repost = function(response, tries) {
 					resolve();
 				}
 			});
-		}, 250);
+		}, 100);
 	});
 };
 
