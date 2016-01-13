@@ -82,26 +82,28 @@ var getPDFsFromList = function(links, n) {
 
 var getPDF = function(url, i, n) {
 	return new Promise(function(resolve, reject) {
-		var file = fs.createWriteStream("./pdfs/pressrelease" + i + "-" + n + ".pdf");
-		http.get(url, function(response) {
-			if (response.statusCode == 404) {
-				resolve(null);
-			} else {
-				response.pipe(file);
-				response.on('end', function() {
-					var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
-					extract(filePath, function (err, pages) {
-						if (err) {
-							logger.error("PDF Extraction: " + err);
-							resolve(null);
-					  	} else {
-					  		resolve(pages.join('\n'));
-					  	};
-					});
-			  	});
-		  	};		
-		}, function(err) {
-			logger.error('Error getting PDF:' + err );
-		});
+		fs.mkdir('./pdfs', function() {
+			var file = fs.createWriteStream("./pdfs/pressrelease" + i + "-" + n + ".pdf");
+			http.get(url, function(response) {
+				if (response.statusCode == 404) {
+					resolve(null);
+				} else {
+					response.pipe(file);
+					response.on('end', function() {
+						var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
+						extract(filePath, function (err, pages) {
+							if (err) {
+								logger.error("PDF Extraction: " + err);
+								resolve(null);
+						  	} else {
+						  		resolve(pages.join('\n'));
+						  	};
+						});
+				  	});
+			  	};		
+			}, function(err) {
+				logger.error('Error getting PDF:' + err );
+			});
+		})
 	});
 };
