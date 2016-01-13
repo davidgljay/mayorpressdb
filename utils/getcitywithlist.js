@@ -27,7 +27,8 @@ module.exports = function(url, queries) {
 					.then(
 						//On success
 						function(results) {
-							if (results == "done" || (lastresults && lastresults[0].url == results[0].url)) {
+							if (results == "done" || (lastresults && lastresults[0] && results[0] && lastresults[0].url == results[0].url)) {
+								logger.info('done');
 								resolve(press_releases);
 							} else if (!url.includes('{n}')) {
 								resolve(results);
