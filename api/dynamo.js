@@ -11,7 +11,17 @@ AWS.config.update({
 
 var dynamodb = this.dynamodb = new AWS.DynamoDB({apiVersion: '2015-02-02'});
 
-//TODO: Auth with dynamoDB.
+//TODO: Figure out how to avoid rewriting items.
+/*
+* I could hold all of my current URLs for a given city in memory. This would probably be fine.
+* For a richer (but premature) optimization I could pull the urls into a list and check it with
+* batchgetitems. 
+* Then I avoid recrawling, which probably makes the most sense.
+* I should do this at a city level. 
+* I COULD then put additional press releases up with individual put requests to avoid overwriting them.
+* Then I could have tag_service update all of those functions to mark them as scanned. This will let me stay
+* Within the 1000 call/day limit and still make it through in 10 days.
+*/
 
 module.exports = function(items) {
 	return new Promise(function(resolve, reject) {
@@ -24,12 +34,12 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
+		//TODO: Change to writitem.
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
-				// logger.error(formatted_items);
+				logger.error(formatted_items);
 				resolve();
-				return;
 			}
 			if (Object.keys(response.UnprocessedItems).length > 0) {
 				//Retry the post once if there are unprocessed items.TODO: make this exponential.
@@ -60,6 +70,7 @@ var repost = function(response, tries) {
 			    ReturnConsumedCapacity: 'NONE'
 			};
 			retry.RequestItems = response.UnprocessedItems;
+			//TODO: Post these w/ writeitem, rather than batchwrite.
 			dynamodb.batchWriteItem(retry, function(err, response) {
 				if (err) {
 					logger.error("Error reposting item to dynamo\n" + err);
