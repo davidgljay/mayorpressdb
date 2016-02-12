@@ -6,6 +6,7 @@ firstdate = require('../utils/firstdate'),
 getLinks = require('../utils/getlinks'),
 extract = require('pdf-text-extract'),
 logger = require('../utils/logger'),
+getPDF = require('../utils/getPDF'),
 urlcheck = require('../utils/urlcheck');
 
 //SPECIAL
@@ -66,52 +67,9 @@ var getPDFsFromList = function(links, n) {
 
 	for (var i = links.length - 1; i >= 0; i--) {
 		if (already_checked_urls[links[i]]===undefined) {
-			promise_array.push(getPDF(links[i], i, n));
+			promise_array.push(getPDF(links[i], 'San Jose', i, n));
 		}
 	};
-	return Promise.all(promise_array).then(function(press_releases) {
-		var result_array = [];
-		for (var i = press_releases.length - 1; i >= 0; i--) {
-			var date = firstdate(press_releases[i]);
-			if (date=='') {
-				continue;
-			}
-			result_array.push({
-					title: "Press Release: PDF",
-					date: date.toISOString(),
-					body: press_releases[i],
-					url: links[i],
-					city: 'San Jose'
-			});				
-		};
-		return result_array;		
-	});		
+	return Promise.all(promise_array);
 };
 
-var getPDF = function(url, i, n) {
-	return new Promise(function(resolve, reject) {
-		fs.mkdir('./pdfs', function() {
-			var file = fs.createWriteStream("./pdfs/pressrelease" + i + "-" + n + ".pdf");
-			http.get(url, function(response) {
-				if (response.statusCode == 404) {
-					resolve(null);
-				} else {
-					response.pipe(file);
-					response.on('end', function() {
-						var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
-						extract(filePath, function (err, pages) {
-							if (err) {
-								logger.error("PDF Extraction: " + err);
-								resolve(null);
-						  	} else {
-						  		resolve(pages.join('\n'));
-						  	};
-						});
-				  	});
-			  	};		
-			}, function(err) {
-				logger.error('Error getting PDF:' + err );
-			});
-		})
-	});
-};

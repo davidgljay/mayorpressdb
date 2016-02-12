@@ -9,6 +9,7 @@ getLinks = require('../utils/getlinks'),
 getPage = require('../utils/getpage'),
 Promise = require('promise'),
 urlcheck = require('./urlcheck'),
+getPDF = require('./getpdf')
 logger = require('./logger');
 
 var sleepcount, already_checked_urls;
@@ -83,7 +84,11 @@ var getListPage = function(url, queries) {
 					}
 					//Confirm that the URL hasn't already been crawled.
 					if (already_checked_urls[links[i]]===undefined) {
-						promise_array.push(getPage(links[i], sleepBy(), queries));
+						if (data[i].href.slice(-4)=='.pdf') {
+							promise_array.push(getPDF(data[i].href,queries.city,i,0))
+						} else {
+							promise_array.push(getPage(links[i], sleepBy(), queries));
+						}
 					}
 				}
 				Promise.all(promise_array).then(function(pages) {

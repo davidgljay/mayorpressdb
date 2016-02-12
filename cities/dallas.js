@@ -27,6 +27,9 @@ module.exports = function() {
 					promise_array = [];
 					for (var i = data.length - 1; i >= 0; i--) {
 						if (already_checked_urls[data[i].href]===undefined) {
+							if (data[i].href.slice(-4)=='.pdf') {
+								promise_array.push(getPDF(data[i].href,'Dallas',i,0))
+							}
 							promise_array.push(getPage(data[i].href, sleepBy,
 							{
 								content: '#bulletin_content',
@@ -48,4 +51,4 @@ module.exports = function() {
 	  		reject(err);
 	  	});
   });
-}
+};
