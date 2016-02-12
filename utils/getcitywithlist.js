@@ -8,46 +8,56 @@ var http = require('follow-redirects').http,
 getLinks = require('../utils/getlinks'),
 getPage = require('../utils/getpage'),
 Promise = require('promise'),
+urlcheck = require('./urlcheck'),
 logger = require('./logger');
 
-var sleepcount;
+var sleepcount, already_checked_urls;
 
 
 module.exports = function(url, queries) {
 	return function() {
-		//Space calls by 50ms to be gentle to city servers.
-
-		return new Promise(function(resolve, reject) {
-		//Iterate through pages with lists of press releases
-			var press_releases = [];
-			var nextListPage = function(n, lastresults) {
-				sleepcount = 0;
-			 	logger.info("Getting " + queries.city + " page " + n);
-				getListPage(url.replace("{n}", n), queries)
-					.then(
-						//On success
-						function(results) {
-							if (results == "done" || (lastresults && lastresults[0].url == results[0].url)) {
-								resolve(press_releases);
-							} else if (!url.includes('{n}')) {
-								resolve(results);
-							} else {
-								press_releases = press_releases.concat(results);
-								nextListPage(n+1, results);
-							}
-						}, 
-						//On error.\
-						function(err) {
-							logger.error("Error in getCityWithList");
-							reject(err);
-						}
-					);		
-			};
-			nextListPage(1, null);
+		return urlcheck(queries.city)(null,[]).then(function(checked_urls) {
+			already_checked_urls = checked_urls;
+			//Iterate through pages with lists of press releases
+			return browseCityIndex(url, queries, already_checked_urls);
 		});		
 	};
 
 };
+
+//Browse the index pages of each city, getting urls of press releases and retreiving them if we haven't already.
+var browseCityIndex = function(url, queries) {
+	return new Promise(function(resolve, reject) {
+		var press_releases = [];
+		var nextListPage = function(n, lastresults) {
+			//Space calls by 50ms to be gentle to city servers.
+			var sleepcount = 0;
+		 	logger.info("Getting " + queries.city + " page " + n);
+			getListPage(url.replace("{n}", n), queries)
+				.then(
+					//On success
+					function(results) {
+						if (results .length === 0 || (lastresults && lastresults[0].url == results[0].url)) {
+							logger.info('Ready to resolve');
+							resolve(press_releases);
+						} else if (!url.includes('{n}')) {
+							resolve(results);
+						} else {
+							press_releases = press_releases.concat(results);
+							nextListPage(n+1, results);
+						}
+					}, 
+					//On error.\
+					function(err) {
+						logger.error("Error in getCityWithList");
+						reject(err);
+					}
+				);		
+		};
+		nextListPage(1, null);		
+	})
+
+}
 
 //Get the links from a page of press releases, get each of those pages, and return them in the proper format.
 var getListPage = function(url, queries) {
@@ -65,14 +75,16 @@ var getListPage = function(url, queries) {
 				var links = getLinks(body, splitUrl[1], queries.links),
 				promise_array = [];
 				if (links.length === 0) {
-					resolve("done");
+					resolve([]);
 				}
 				for (var i=0; i<links.length; i++) {
 					if (i%100===0 && i>0) {
 						logger.info("Processed 100 pages from " + queries.city + " at " + new Date());
 					}
-					var sleep = sleepBy();
-					promise_array.push(getPage(links[i], sleep, queries));
+					//Confirm that the URL hasn't already been crawled.
+					if (already_checked_urls[links[i]]===undefined) {
+						promise_array.push(getPage(links[i], sleepBy(), queries));
+					}
 				}
 				Promise.all(promise_array).then(function(pages) {
 					resolve(pages);
@@ -89,17 +101,3 @@ var sleepBy = function() {
 	sleepcount += 250;
 	return sleepcount;
 };
-
-// function arraysEqual(a, b) {
-//   if (a === b) return true;
-//   if (a === null || b === null) return false;
-//   if (a.length != b.length) return false;
-
-//   a = a.sort();
-//   b = b.sort();
-
-//   for (var i = 0; i < a.length; ++i) {
-//     if (a[i] !== b[i]) return false;
-//   }
-//   return true;
-// }

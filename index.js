@@ -1,7 +1,8 @@
 var getCityWithList = require('./utils/getcitywithlist'),
 clean = require('./utils/clean'),
 logger = require('./utils/logger'),
-dynamodb = require('./api/dynamo');
+dynamodb = require('./api/dynamo'),
+urlcheck = require('./utils/urlcheck');
 
 require('http').globalAgent.maxSockets = 50;
 require('https').globalAgent.maxSockets = 50;
@@ -105,42 +106,5 @@ var crawlCity = function(i) {
 			logger.error(err);
 		});
 };
+
 crawlCity(0);
-
-
-
-// cities[i].data_promise().then(function(results) {
-// 	logger.info("Posting for:" + city.name);
-// 		var dynamo_post = function(results) {
-// 			if (results.length>0) {
-// 				dynamodb(results.splice(0,24), city.name).then(
-// 					function() {
-// 						dynamo_post(results);
-// 					}, function(err) {
-// 						logger.error("Error posting " + city.name + " to dynamoDB: " + err);
-// 						reject(err);
-// 					});
-// 			} else {
-// 				logger.info("Done fetching " + city.name + "!");
-// 				i++;
-// 				return cities[i].data_promise();
-// 			};
-// 		};
-// 		dynamo_post(results);				
-// 	});
-// })
-// var city_promise_chain = new Promise(function(resolve, reject) {
-// 	resolve();
-// });
-// for (city in cities) {
-// 	logger.info("Adding to chain for: " + city);
-// 	city_promise_chain = city_promise_chain.then(cities[city]).then(
-// 		//On Success
-// 		function(results) {
-			
-// 		},
-// 		//On Error
-// 		function(err) {
-// 			logger.error("Error fetching " + city + ": " + err);
-// 		})
-// };

@@ -38,8 +38,9 @@ module.exports = function(items) {
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
-				logger.error(formatted_items);
+				// logger.error(formatted_items);
 				resolve();
+				return;
 			}
 			if (Object.keys(response.UnprocessedItems).length > 0) {
 				//Retry the post once if there are unprocessed items.TODO: make this exponential.
@@ -53,6 +54,16 @@ module.exports = function(items) {
 		});			
 	});
 };
+
+//Handle queries to dynamodb.
+module.exports.query = function(params) {
+	return new Promise(function(resolve, reject) {
+		dynamodb.query(params, function(err, data) {
+			if(err) reject(err);
+			else resolve(data);
+		})
+	});
+}
 
 
 //Try reposting 5 times, if that doesn't work then give up.
@@ -123,7 +134,7 @@ var put_params = function(items) {
 		    "RequestItems": {},
 		    ReturnConsumedCapacity: 'NONE'
 		};
-		dynamo_output.RequestItems[process.env.DYNAMODB_NAME] = formatted_items;
+		dynamo_output.RequestItems[process.env.RELEASE_TABLE] = formatted_items;
 		return dynamo_output;		
 	}
 
