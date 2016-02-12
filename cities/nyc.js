@@ -5,10 +5,12 @@
 
 var http = require('http'),
 Promise = require('promise'),
-logger = require('../utils/logger');
+logger = require('../utils/logger'),
+urlcheck = require('../utils/urlcheck');
 
 var nyc_url = "http://www1.nyc.gov/home/lscs/NewsFilterService.page?category=all&contentType=press_release,statement,executive_order,public_schedule&language=english&pageNumber={n}";
-var press_releases = [];
+var press_releases = [],
+already_checked_urls;
 
 module.exports = function() {
   logger.info("NYC");
@@ -35,7 +37,10 @@ module.exports = function() {
           }
         );    
     };
-    nextList(1);
+    urlcheck('New York')(null,[]).then(function(checked_urls) {
+      already_checked_urls = checked_urls
+      nextList(1);
+    });
   });
 };
   
@@ -59,13 +64,15 @@ var getList = function(url) {
             resolve('done');
           }
           for (var i in response) {
-            press_releases.push({
-              "title": response[i].metadata['TeamSite/Metadata/Title'],
-              "body":  response[i].metadata['TeamSite/Metadata/Description'],
-              "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']).toISOString(),
-              "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL'],
-              "city": "New York"
-            });
+            if (already_checked_urls['http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL']]===undefined) {
+              press_releases.push({
+                "title": response[i].metadata['TeamSite/Metadata/Title'],
+                "body":  response[i].metadata['TeamSite/Metadata/Description'],
+                "date":  new Date(response[i].metadata['TeamSite/Metadata/Date']).toISOString(),
+                "url": 'http://www1.nyc.gov' + response[i].metadata['TeamSite/Metadata/URL'],
+                "city": "New York"
+              });            
+            }
           }
           resolve(press_releases);
         });

@@ -5,11 +5,13 @@ path = require('path'),
 firstdate = require('../utils/firstdate'),
 getLinks = require('../utils/getlinks'),
 extract = require('pdf-text-extract'),
-logger = require('../utils/logger');
+logger = require('../utils/logger'),
+urlcheck = require('../utils/urlcheck');
 
 //SPECIAL
 var base_url = 'http://www.sanjoseinfo.org',
-main_url = base_url + '/go/doctype/1914/47735/?offset={n}0';
+main_url = base_url + '/go/doctype/1914/47735/?offset={n}0',
+already_checked_urls;
 
 module.exports = function() {
 	return new Promise(function(resolve, reject) {
@@ -51,7 +53,11 @@ module.exports = function() {
 				})
 			});
 		};
-		nextListPage(0);
+
+		urlcheck('San Jose')(null,[]).then(function(checked_urls) {
+			already_checked_urls = checked_urls
+			nextListPage(0);
+		});
 	});
 }
 
@@ -59,7 +65,9 @@ var getPDFsFromList = function(links, n) {
 	var promise_array = [];
 
 	for (var i = links.length - 1; i >= 0; i--) {
-		promise_array.push(getPDF(links[i], i, n));
+		if (already_checked_urls[links[i]]===undefined) {
+			promise_array.push(getPDF(links[i], i, n));
+		}
 	};
 	return Promise.all(promise_array).then(function(press_releases) {
 		var result_array = [];

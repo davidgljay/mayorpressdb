@@ -9,10 +9,12 @@
 
 var getPage = require('../utils/getpage'),
 promise = require('promise'),
-logger = require('../utils/logger');
+logger = require('../utils/logger'),
+urlcheck = require('../utils/urlcheck');
 
 var base_url = "http://www.phoenix.gov",
-main_url = base_url + "/news/mayor/";
+main_url = base_url + "/news/mayor/",
+already_checked_urls;
 
 module.exports = function() {
 	var count = 100,
@@ -25,13 +27,15 @@ module.exports = function() {
 			var sleepBy = 0;
 			for (var i=0; i<100; i++) {
 				count ++;
-				sleepBy += 500;
-				promise_array.push(getPage(main_url+count, sleepBy, {
-					content:'#MSOZoneCell_WebPartWPQ9', 
-					body:'p', 
-					title:'.title',
-					city:'Phoenix'
-				}))
+				if (already_checked_urls[main_url+count]===undefined) {
+					sleepBy += 500;
+					promise_array.push(getPage(main_url+count, sleepBy, {
+						content:'#MSOZoneCell_WebPartWPQ9', 
+						body:'p', 
+						title:'.title',
+						city:'Phoenix'
+					}))					
+				};
 			}
 			Promise.all(promise_array).then(function(results) {
 				press_releases = press_releases.concat(results);
@@ -51,7 +55,10 @@ module.exports = function() {
 				reject(err);
 			})	
 		};
-		getReleases();		
+		urlcheck('Phoenix')(null,[]).then(function(checked_urls) {
+			already_checked_urls = checked_urls
+			getReleases();
+		});
 	})
 }
 
