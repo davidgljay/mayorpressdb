@@ -10,8 +10,14 @@ require('https').globalAgent.maxSockets = 50;
 //Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
 
 var cities = [
-	require('./cities/sanjose'),
-	require('./cities/dallas'),
+	getCityWithList('http://www.houstontx.gov/mayor/press/',
+		{
+			links:'ul.bullets li a',
+			content:'#mainContent',
+			body:'p',
+			title:'.pageTitle, .span6 h1, .title, .subtitle',
+			city:'Houston'
+		}),
 	getCityWithList('http://www.lamayor.org/press_release?page={n}',
 		{
 			links: '.page_excerpt h3 a',
@@ -20,6 +26,8 @@ var cities = [
 			title:'#headline h2',
 			city:'Los Angeles'
 		}),
+	require('./cities/sanjose'),
+	require('./cities/dallas'),
 	getCityWithList('http://www.cityofchicago.org/city/en/depts/mayor/press_room/press_releases.{n}.html?numPerPage=100',
 		{
 			links: '.pressReleaseList .content a',
@@ -36,14 +44,7 @@ var cities = [
 			title:'.pageTitle, .span6 h1, .title, .subtitle',
 			city:'Houston'
 		}),
-	getCityWithList('http://www.houstontx.gov/mayor/press/',
-		{
-			links:'ul.bullets li a',
-			content:'#mainContent',
-			body:'p',
-			title:'.pageTitle, .span6 h1, .title, .subtitle',
-			city:'Houston'
-		}),
+
 	getCityWithList("http://www.sandiego.gov/mayor/news/index.shtml", 
 		{
 			links: '#releases td a',

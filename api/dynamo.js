@@ -34,7 +34,7 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
-		//TODO: Change to writitem.
+		logger.info(formatted_items);
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
@@ -98,6 +98,7 @@ var repost = function(response, tries) {
 var put_params = function(items) {
 	var formatted_items = [],
 	hashes = new Set();
+	logger.info(items);
 
 	for (var i = items.length - 1; i >= 0; i--) {
 		//Some items will be null, skip them. Also confirm that there are no duplicate hashes.

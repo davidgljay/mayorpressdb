@@ -38,7 +38,7 @@ var browseCityIndex = function(url, queries) {
 				.then(
 					//On success
 					function(results) {
-						if (results .length === 0 || (lastresults && lastresults[0].url == results[0].url)) {
+						if (results.length === 0 || (lastresults && lastresults[0].url == results[0].url)) {
 							logger.info('Ready to resolve');
 							resolve(press_releases);
 						} else if (!url.includes('{n}')) {
@@ -67,7 +67,7 @@ var getListPage = function(url, queries) {
 		http.get(url, function(res) {
 			var body ='';
 			if (res.statusCode==404) {
-				resolve("done");
+				resolve([]);
 			}
 			res.on("data", function(chunk) {
 				body += chunk;
@@ -84,7 +84,7 @@ var getListPage = function(url, queries) {
 					}
 					//Confirm that the URL hasn't already been crawled.
 					if (already_checked_urls[links[i]]===undefined) {
-						if (data[i].href.slice(-4)=='.pdf') {
+						if (links[i].slice(-4)=='.pdf') {
 							promise_array.push(getPDF(data[i].href,queries.city,i,0))
 						} else {
 							promise_array.push(getPage(links[i], sleepBy(), queries));

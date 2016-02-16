@@ -1,10 +1,15 @@
 var extract = require('pdf-text-extract'),
-http=require('http');
+http = require('follow-redirects').http,
+fs = require('fs'),
+path = require('path'),
+firstdate = require('./firstdate');
 
 module.exports=function(url, city, i, n) {
 	return new Promise(function(resolve, reject) {
 		fs.mkdir('./pdfs', function() {
 			var file = fs.createWriteStream("./pdfs/pressrelease" + i + "-" + n + ".pdf");
+			logger.info('Getting pdf');
+			logger.info(url);
 			http.get(url, function(response) {
 				if (response.statusCode == 404) {
 					resolve(null);
@@ -20,21 +25,21 @@ module.exports=function(url, city, i, n) {
 						  		var body = pages.join('\n');
 								var date = firstdate(body);
 								if (date=='') {
-									continue;
+									return;
 								}
-								result_array.push({
+								resolve({
 										title: "Press Release: PDF",
 										date: date.toISOString(),
 										body: body,
-										url: links[i],
+										url: url,
 										city: city
-								});				
+								});
 						  	};
 						});
 				  	});
 			  	};		
 			}, function(err) {
-				logger.error('Error getting PDF:' + err );
+				reject('Error getting PDF:' + err );
 			});
 		})
 	});

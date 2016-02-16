@@ -1,7 +1,5 @@
 
 var http = require('follow-redirects').http,
-fs = require('fs'),
-path = require('path'),
 firstdate = require('../utils/firstdate'),
 getLinks = require('../utils/getlinks'),
 extract = require('pdf-text-extract'),
