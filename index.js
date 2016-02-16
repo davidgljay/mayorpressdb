@@ -2,6 +2,7 @@ var getCityWithList = require('./utils/getcitywithlist'),
 clean = require('./utils/clean'),
 logger = require('./utils/logger'),
 dynamodb = require('./api/dynamo'),
+sns = require('./api/sns'),
 urlcheck = require('./utils/urlcheck');
 
 require('http').globalAgent.maxSockets = 50;
@@ -101,7 +102,7 @@ var crawlCity = function(i) {
 				return crawlCity(i+1);
 			} else {
 				logger.info("Done crawling all cities.");
-				return;
+				return sns(JSON.stringify({task:"mayorpressdb_tags"}),"arn:aws:sns:us-east-1:663987893806:mayorsdb_starttask");
 			}
 		}, function(err) {
 			logger.error(err);
