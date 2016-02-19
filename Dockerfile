@@ -1,6 +1,6 @@
 FROM node
 MAINTAINER "David Jay <davidgljay@gmail.com>"
-LABEL updated_at = "2015-12-27" version = .01
+LABEL updated_at = "2016-2-20" version = .05
 LABEL description = "A crawler for scanning city mayor's offices websites for press releases."
 RUN apt-get update
 COPY ./ /home/mayorsdb

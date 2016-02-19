@@ -4,7 +4,7 @@ firstdate = require('../utils/firstdate'),
 getLinks = require('../utils/getlinks'),
 extract = require('pdf-text-extract'),
 logger = require('../utils/logger'),
-getPDF = require('../utils/getPDF'),
+getPDF = require('../utils/getpdf'),
 urlcheck = require('../utils/urlcheck');
 
 //SPECIAL
