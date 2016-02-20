@@ -73,7 +73,7 @@ var repost = function(response, tries) {
 			resolve();
 			return;
 		}
-		logger.info("Trying to repost " + Object.keys(response.UnprocessedItems).length + " entries.");
+		logger.info("Trying to repost " + Object.keys(response.UnprocessedItems).length + " entries, try " + tries + ".");
 		setTimeout(function() {
 			var retry = {
 			    "RequestItems": {},
@@ -85,12 +85,12 @@ var repost = function(response, tries) {
 				if (err) {
 					logger.error("Error reposting item to dynamo\n" + err);
 				} else if (Object.keys(response.UnprocessedItems).length > 0) {
-					resolve(repost(response, tries++));
+					resolve(repost(response, tries+1));
 				} else {
 					resolve();
 				}
 			});
-		}, 100);
+		}, 500);
 	});
 };
 

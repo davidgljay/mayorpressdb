@@ -40,6 +40,9 @@ module.exports = function() {
     urlcheck('New York')(null,[]).then(function(checked_urls) {
       already_checked_urls = checked_urls
       nextList(1);
+    },
+    function(err) {
+      reject(err);
     });
   });
 };
@@ -77,7 +80,7 @@ var getList = function(url) {
           resolve(press_releases);
         });
     }).on('error', function(e) {
-      logger.error("Error in NYC:" + err);
+      logger.error("Error in NYC:" + e);
       reject(e.message);
     });    
   });
