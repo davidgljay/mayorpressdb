@@ -34,7 +34,6 @@ module.exports = function(items) {
 			resolve();
 			return;
 		}
-		logger.info(formatted_items);
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
 				logger.error("Error in batchWriteItem for:\n" + err);
