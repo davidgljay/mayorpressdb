@@ -48,7 +48,7 @@ module.exports = function(items) {
 			} else {
 				setTimeout(function() {
 					resolve();
-				},100);
+				},1000);
 			}
 		});			
 	});
