@@ -106,6 +106,9 @@ var crawlCity = function(i) {
 			}
 		}, function(err) {
 			logger.error(err);
+			setTimeout(function() {
+				process.exit(1)
+			}, 1000);
 		});
 };
 
