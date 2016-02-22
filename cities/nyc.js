@@ -39,7 +39,7 @@ module.exports = function() {
     };
     urlcheck('New York')(null,[]).then(function(checked_urls) {
       already_checked_urls = checked_urls
-      nextList(700);
+      nextList(0);
     },
     function(err) {
       reject(err);
