@@ -34,7 +34,9 @@ module.exports=function(city) {
 		        if (data.LastEvaluatedKey===undefined) {
 	    	        return urls;
 		        } else {
-		            return queryDynamo(data.LastEvaluatedKey, urls);
+		        	setTimout(function() {
+			            return queryDynamo(data.LastEvaluatedKey, urls);
+		        	},1000)
 		        }
 			});
 

@@ -11,6 +11,7 @@ require('https').globalAgent.maxSockets = 50;
 //Build an array of functions for searching each city. Each is a promise that returns all of the press releases for that city.
 
 var cities = [
+	require('./cities/sanjose'),
 	require('./cities/nyc'),
 	getCityWithList('http://www.houstontx.gov/mayor/press/',
 		{
@@ -28,7 +29,6 @@ var cities = [
 			title:'#headline h2',
 			city:'Los Angeles'
 		}),
-	require('./cities/sanjose'),
 	require('./cities/dallas'),
 	getCityWithList('http://www.cityofchicago.org/city/en/depts/mayor/press_room/press_releases.{n}.html?numPerPage=100',
 		{

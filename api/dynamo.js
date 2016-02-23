@@ -90,7 +90,7 @@ var repost = function(response, tries) {
 					resolve();
 				}
 			});
-		}, 500);
+		}, 1000);
 	});
 };
 
