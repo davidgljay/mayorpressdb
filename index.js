@@ -105,7 +105,7 @@ var crawlCity = function(i) {
 				return sns(JSON.stringify({task:"mayorpressdb_tags"}),"arn:aws:sns:us-east-1:663987893806:mayorsdb_starttask");
 			}
 		}, function(err) {
-			logger.error(err);
+			logger.info(err);
 			setTimeout(function() {
 				process.exit(1)
 			}, 1000);

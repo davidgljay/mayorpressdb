@@ -32,11 +32,13 @@ module.exports = function() {
 					if (links.length > 0) {
 						//Push a promise to an array
 						press_release_promises.push(getPDFsFromList(links, n));
+						logger.info("Loading another page");
 						nextListPage(n+1);
 					} else {
 						//When all promises are returned, flatten them into a 1d array and return.
 						Promise.all(press_release_promises).then(
 							function(results) {
+								logger.info("Flattening press releases");
 								var press_releases = [];
 								for (var i = results.length - 1; i >= 0; i--) {
 									press_releases = press_releases.concat(results[i]);

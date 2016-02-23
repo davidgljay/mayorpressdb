@@ -19,7 +19,7 @@ module.exports=function(url, city, i, n) {
 						var filePath = path.join(__dirname, '../pdfs/pressrelease' + i + '-' + n + '.pdf');
 						extract(filePath, function (err, pages) {
 							if (err) {
-								logger.error("PDF Extraction: " + err);
+								logger.info("PDF Extraction: " + err);
 								resolve(null);
 						  	} else {
 						  		var body = pages.join('\n');
