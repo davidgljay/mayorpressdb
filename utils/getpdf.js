@@ -25,7 +25,8 @@ module.exports=function(url, city, i, n) {
 						  		var body = pages.join('\n');
 								var date = firstdate(body);
 								if (date=='') {
-									return;
+									resolve(null);
+									return
 								}
 								resolve({
 										title: "Press Release: PDF",

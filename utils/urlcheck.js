@@ -34,13 +34,12 @@ module.exports=function(city) {
 		        if (data.LastEvaluatedKey===undefined) {
 	    	        return urls;
 		        } else {
-		        	setTimout(function() {
-			            return queryDynamo(data.LastEvaluatedKey, urls);
-		        	},1000)
+			        return queryDynamo(data.LastEvaluatedKey, urls);
 		        }
 			});
-
-			resolve(dynamopromise);
+			setTimeout(function() {
+				resolve(dynamopromise);
+			},1000);
 		});
 	};
 };

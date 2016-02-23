@@ -46,6 +46,7 @@ module.exports = function() {
 								resolve(press_releases);
 							},
 							function(err) {
+								logger.info("Got err waiting for PDFs: " + err)
 								reject(err);
 							}
 						)		
