@@ -85,7 +85,7 @@ var getListPage = function(url, queries) {
 					//Confirm that the URL hasn't already been crawled.
 					if (already_checked_urls[links[i]]===undefined) {
 						if (links[i].slice(-4)=='.pdf') {
-							promise_array.push(getPDF(data[i].href,queries.city,i,0))
+							promise_array.push(getPDF(links[i],queries.city,i,0))
 						} else {
 							promise_array.push(getPage(links[i], sleepBy(), queries));
 						}
